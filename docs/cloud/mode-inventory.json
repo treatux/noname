@@ -17,9 +17,11 @@
     "tested": true,
     "local_support": true,
     "cloud_host_support": "upstream-connect",
-    "natural_completion": false,
-    "evidence": "evidence/guozhan3-samples.json",
-    "result": "Cloud host and player joined; AI rounds running; completion pending. First run navigated unexpectedly."
+    "natural_completion": true,
+    "evidence": "evidence/guozhan3-room.json",
+    "result": "Cloud host and browser player natural completion on both peers; no recorded fatal errors.",
+    "cloud_hosted": true,
+    "sample_count": 36
   },
   {
     "mode": "versus",
@@ -30,8 +32,9 @@
     "cloud_host_support": "upstream-connect",
     "cloud_hosted": true,
     "natural_completion": true,
-    "evidence": "evidence/versus-1v1-room.json",
-    "result": "1v1 natural end on both peers; host console throws on plain additionaldead statistics records. Guard patched; post-patch regression pending."
+    "evidence": "evidence/versus-patched-room.json",
+    "result": "Cloud host and browser player natural completion on both peers; no recorded fatal errors.",
+    "sample_count": 23
   },
   {
     "mode": "boss",

@@ -47,3 +47,12 @@
 - 国战首轮测试意外页面跳转导致采样失败；第二次有效运行 `guozhan3` 继续等待自然结算。不得当作通过。
 - 无音频 APK 首次仍约1.309GB，ZIP条目压缩合计约657MB；清理生成的 packageDebug 增量状态后完整构建成功，628MiB。包体支持检查发现默认 SAF 还要求另一份游戏目录，因此增加显式只读内置资源测试开关 NONAME_TEST_PACKAGED=1，默认行为保持不变；最终此变体重新构建中，安装待验证。
 - `docs/cloud/android-test.md` 记录测试签名、只读/静音限制、adb reverse / SSH 访问方式、实机验证步骤。尚未配置无线公网 WSS。
+
+### 后续结果
+
+- 国战 `guozhan3-room.json`：双方 over=true、events=[]、36个样本，自然结算。
+- 对决修补回归 `versus-patched-room.json`：双方 over=true、events=[]；换将后正常结算。五种声明联机的模式均已有至少一个云端主持+浏览器玩家自然完成代表局（不意味着所有子模式无缺陷）。
+- 身份掉线恢复 `identity-reconnect4-room.json`：恢复后双方最终自然结算，11个样本。
+- 只读内置静音 APK 最终构建成功（4m38s）；约628MiB；流式安装 `Success`。SHA256 `630ac8aef17862a350cf2cd1f1f88f2b705e3a11a1f407453eaf14453d67c132`。安装证据 `android-packaged-install.log`，应用版本1.0 / versionCode1，minSdk26 / targetSdk36。
+- Android 启动实际遇到模拟器系统和应用 ANR，对话框阻塞 CDP，不能据此声称流畅。日志与截图 `android-startup-logcat.txt`、`android-startup*.png` 保存。通过原生点击接受GPL弹窗后进入游戏与新手向导；后续云端玩家测试继续进行。
+- Android WebView 不支持 Playwright Browser上下文管理协议；增加直接 page CDP 最小适配 `scripts/android-cdp.mjs`，未修改规则引擎。出现 `Runtime.enable` 超时应先检查原生系统ANR/GPL弹窗，而非当作联机协议失败。

@@ -1,5 +1,6 @@
 import { chromium } from '/root/pi-web/node_modules/playwright/index.mjs';
 import fs from 'node:fs/promises';
+import { androidPage } from './android-cdp.mjs';
 const root='/root/noname-cloud/evidence';
 const browser=await chromium.launch({executablePath:'/root/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome',headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
 const events=[];
@@ -14,7 +15,7 @@ async function until(page,fn,timeout=60000){const end=Date.now()+timeout;while(D
 async function boot(name){
  const isAndroid=name==='client'&&!!process.env.ANDROID_CDP;
  let context,page;
- if(isAndroid){androidBrowser=await chromium.connectOverCDP(process.env.ANDROID_CDP);context=androidBrowser.contexts()[0];page=context.pages()[0]||await context.newPage();}
+ if(isAndroid){page=await androidPage(process.env.ANDROID_CDP);androidBrowser=page;}
  else {context=await browser.newContext();page=await context.newPage();}
  const base=isAndroid?'https://localhost':'http://127.0.0.1:18091';
  await page.addInitScript(()=>{const Native=WebSocket;window.cloudNet={sent:0,received:0,messages:0};window.WebSocket=class extends Native{constructor(...args){super(...args);this.addEventListener('message',e=>{window.cloudNet.received+=typeof e.data==='string'?new TextEncoder().encode(e.data).length:0;window.cloudNet.messages++;});}send(data){window.cloudNet.sent+=typeof data==='string'?new TextEncoder().encode(data).length:0;return super.send(data);}};});
@@ -25,12 +26,12 @@ async function boot(name){
  page.on('framenavigated',f=>{if(f===page.mainFrame())console.log('navigation',name,f.url());});
  page.on('dialog',async d=>{events.push({name,dialog:d.message()});console.log('dialog',name,d.message().slice(0,200));if(d.message().includes('重置')||d.message().includes('未正常')||d.message().includes('邀请链接'))await d.dismiss();else await d.accept();});
  await page.route('**/cloud-seed.html',route=>route.fulfill({contentType:'text/html',body:'<!doctype html><title>seed</title>'}));
- await page.goto(base+'/cloud-seed.html',{waitUntil:'domcontentloaded',timeout:20000});
+ if(!isAndroid)await page.goto(base+'/cloud-seed.html',{waitUntil:'domcontentloaded',timeout:20000});
  await page.evaluate(async()=>{
   localStorage.setItem('gplv3_noname_alerted','true');localStorage.setItem('noname_0.9_loadtime','120000');sessionStorage.setItem('isJITReloaded','true');sessionStorage.setItem('canUseTs','true');
   await new Promise((resolve,reject)=>{const r=indexedDB.open('noname_0.9_data',4);r.onupgradeneeded=()=>{for(const n of ['config','data','image','audio'])if(!r.result.objectStoreNames.contains(n))r.result.createObjectStore(n);if(!r.result.objectStoreNames.contains('video'))r.result.createObjectStore('video',{keyPath:'time'});};r.onerror=reject;r.onsuccess=()=>{const db=r.result;const tx=db.transaction('config','readwrite');const s=tx.objectStore('config');for(const [k,v] of Object.entries({mode:'connect',new_tutorial:true,show_splash:'off',version:'1.11.7',read_clipboard_mode_config_connect:false,characters:['standard','shenhua','refresh'],cards:['standard','extra'],extensions:[],totouched:true,touchscreen:false,game_speed:'vvfast',connect_mode:'identity',connect_read_clipboard:false,background_music:'music_off',volumn_audio:0,volumn_background:0}))s.put(v,k);tx.oncomplete=()=>{db.close();resolve();};};});
  });
- await page.goto(base+'/',{waitUntil:'domcontentloaded'});
+ await page.goto(base+'/index.html',{waitUntil:'domcontentloaded'});
  await page.waitForTimeout(2000);
  console.log('before-ready',name,await page.evaluate(async()=>{const {lib,ui}=await import('/noname.js');return {version:lib.version,mode:lib.config?.mode,characters:Object.keys(lib.character).length,ip:!!ui.ipnode,body:document.body.innerText.slice(0,600),resources:performance.getEntriesByType('resource').filter(r=>r.name.includes('init')||r.name.endsWith('.ts')).map(r=>r.name)};}));
  await until(page,async()=>{const {ui,lib}=await import('/noname.js');return !!ui.ipnode&&Object.keys(lib.character).length>10;});
