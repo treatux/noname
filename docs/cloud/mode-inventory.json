@@ -1,0 +1,62 @@
+[
+  {
+    "mode": "identity",
+    "name": "身份",
+    "declared_connect": true,
+    "tested": false
+  },
+  {
+    "mode": "guozhan",
+    "name": "国战",
+    "declared_connect": true,
+    "tested": false
+  },
+  {
+    "mode": "versus",
+    "name": "对决",
+    "declared_connect": true,
+    "tested": false
+  },
+  {
+    "mode": "boss",
+    "name": "挑战",
+    "declared_connect": false,
+    "tested": false
+  },
+  {
+    "mode": "doudizhu",
+    "name": "斗地主",
+    "declared_connect": true,
+    "tested": false
+  },
+  {
+    "mode": "single",
+    "name": "单挑",
+    "declared_connect": true,
+    "tested": false
+  },
+  {
+    "mode": "chess",
+    "name": "战棋",
+    "declared_connect": false,
+    "tested": false
+  },
+  {
+    "mode": "tafang",
+    "name": "塔防",
+    "declared_connect": false,
+    "tested": false
+  },
+  {
+    "mode": "stone",
+    "name": "炉石",
+    "declared_connect": false,
+    "tested": false
+  },
+  {
+    "mode": "brawl",
+    "name": "乱斗",
+    "declared_connect": false,
+    "tested": false
+  }
+]

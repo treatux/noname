@@ -18,9 +18,10 @@ class MainActivity : BridgeActivity() {
         super.onCreate(savedInstanceState)
 
         val webView = bridge.webView
+        // Test APKs use the packaged game, including on physical devices.
+        // Keep WebView debugging available for automated client verification.
         if (BuildConfig.DEBUG) {
-            webView.loadUrl("http://10.0.2.2:8080")
-            return
+            WebView.setWebContentsDebuggingEnabled(true)
         }
 
         val assetLoader = WebViewAssetLoader.Builder()

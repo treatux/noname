@@ -1,0 +1,15 @@
+import { chromium } from '/root/pi-web/node_modules/playwright/index.mjs';
+import fs from 'node:fs/promises';
+const browser = await chromium.launch({executablePath:'/root/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome',headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
+const page=await browser.newPage();
+const errors=[];
+page.on('pageerror',e=>errors.push(String(e)));
+page.on('console',m=>{if(m.type()==='error') errors.push(m.text().slice(0,500));});
+page.on('dialog',async d=>{console.log('dialog',d.message().slice(0,160));await d.accept();});
+await page.addInitScript(()=>localStorage.setItem('gplv3_noname_alerted','true'));
+await page.goto('http://127.0.0.1:18081/', {waitUntil:'domcontentloaded',timeout:15000});
+await page.waitForTimeout(8000);
+console.log(JSON.stringify({title:await page.title(),body:(await page.textContent('body')).slice(0,1800),errors},null,2));
+await page.screenshot({path:'/root/noname-cloud/evidence/boot.png'});
+console.log(await page.evaluate(async()=>{const {lib,game,_status}=await import('/noname.js');return {mode:lib.config?.mode,version:lib.version,prefix:lib.configprefix,event:_status.event?.name,all:lib.config?.all};}));
+await browser.close();
