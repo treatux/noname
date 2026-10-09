@@ -20,3 +20,7 @@ Thumbs.db
 
 # Skill for private use
 .agents/skills/*-selfuse
+
+# Local tool state and Kotlin incremental caches
+.local/
+apps/mobile/android/.kotlin/

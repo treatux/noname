@@ -82,3 +82,10 @@ function patchAndroidAssets() {
 await buildPreload();
 capSync();
 patchAndroidAssets();
+
+// Optional silent test package for devices with limited storage.
+// The default build keeps all upstream audio resources.
+if (process.env.NONAME_TEST_SILENT === "1") {
+	rmSync(resolve(root, "android/app/src/main/assets/public/audio"), { recursive: true, force: true });
+	console.log("Silent test APK: audio assets omitted; game rules and modes preserved.");
+}
