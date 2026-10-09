@@ -56,3 +56,7 @@
 - 只读内置静音 APK 最终构建成功（4m38s）；约628MiB；流式安装 `Success`。SHA256 `630ac8aef17862a350cf2cd1f1f88f2b705e3a11a1f407453eaf14453d67c132`。安装证据 `android-packaged-install.log`，应用版本1.0 / versionCode1，minSdk26 / targetSdk36。
 - Android 启动实际遇到模拟器系统和应用 ANR，对话框阻塞 CDP，不能据此声称流畅。日志与截图 `android-startup-logcat.txt`、`android-startup*.png` 保存。通过原生点击接受GPL弹窗后进入游戏与新手向导；后续云端玩家测试继续进行。
 - Android WebView 不支持 Playwright Browser上下文管理协议；增加直接 page CDP 最小适配 `scripts/android-cdp.mjs`，未修改规则引擎。出现 `Runtime.enable` 超时应先检查原生系统ANR/GPL弹窗，而非当作联机协议失败。
+
+### Android 接入尚未通过
+
+`android-identity4.log` 在实际 APK WebView 中捕获 `Failed to resolve module specifier "vue"`；APK index 确实包含 importmap，仍需核查 WebView 支持、JIT worker 和资源加载。原生系统 ANR 反复遮挡 GPL/错误弹窗并阻塞 CDP。已安装与进入游戏不能替代 Android 接入对局成功，APK 和云端主持职责验收继续保持未完成。
