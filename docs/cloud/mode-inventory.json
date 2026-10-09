@@ -3,60 +3,121 @@
     "mode": "identity",
     "name": "身份",
     "declared_connect": true,
-    "tested": false
+    "tested": true,
+    "cloud_hosted": true,
+    "natural_completion": true,
+    "evidence": "evidence/identity-stable-room.json",
+    "local_support": true,
+    "cloud_host_support": "upstream-connect"
   },
   {
     "mode": "guozhan",
     "name": "国战",
     "declared_connect": true,
-    "tested": false
+    "tested": true,
+    "local_support": true,
+    "cloud_host_support": "upstream-connect",
+    "natural_completion": false,
+    "evidence": "evidence/guozhan3-samples.json",
+    "result": "Cloud host and player joined; AI rounds running; completion pending. First run navigated unexpectedly."
   },
   {
     "mode": "versus",
     "name": "对决",
     "declared_connect": true,
-    "tested": false
+    "tested": true,
+    "local_support": true,
+    "cloud_host_support": "upstream-connect",
+    "cloud_hosted": true,
+    "natural_completion": true,
+    "evidence": "evidence/versus-1v1-room.json",
+    "result": "1v1 natural end on both peers; host console throws on plain additionaldead statistics records. Guard patched; post-patch regression pending."
   },
   {
     "mode": "boss",
     "name": "挑战",
     "declared_connect": false,
-    "tested": false
+    "tested": true,
+    "local_support": true,
+    "cloud_host_support": "not exposed by upstream connect API",
+    "natural_completion": false,
+    "evidence": "evidence/local-boss.json",
+    "result": "Representative local rule loop running; no fatal error; not network enabled by upstream.",
+    "players": 6,
+    "event": "useCard"
   },
   {
     "mode": "doudizhu",
     "name": "斗地主",
     "declared_connect": true,
-    "tested": false
+    "tested": true,
+    "cloud_hosted": true,
+    "natural_completion": true,
+    "evidence": "evidence/doudizhu-room.json",
+    "local_support": true,
+    "cloud_host_support": "upstream-connect"
   },
   {
     "mode": "single",
     "name": "单挑",
     "declared_connect": true,
-    "tested": false
+    "tested": true,
+    "cloud_hosted": true,
+    "natural_completion": true,
+    "evidence": "evidence/single-room.json",
+    "local_support": true,
+    "cloud_host_support": "upstream-connect"
   },
   {
     "mode": "chess",
     "name": "战棋",
     "declared_connect": false,
-    "tested": false
+    "tested": true,
+    "local_support": true,
+    "cloud_host_support": "not exposed by upstream connect API",
+    "natural_completion": false,
+    "evidence": "evidence/local-chess.json",
+    "result": "Representative local rule loop running; no fatal error; not network enabled by upstream.",
+    "players": 6,
+    "event": "judge"
   },
   {
     "mode": "tafang",
     "name": "塔防",
     "declared_connect": false,
-    "tested": false
+    "tested": true,
+    "local_support": true,
+    "cloud_host_support": "not exposed by upstream connect API",
+    "natural_completion": false,
+    "evidence": "evidence/local-tafang-patched.json",
+    "result": "Representative local rule loop running; no fatal error; not network enabled by upstream. Initial upstream spectator gameDraw crash fixed with real starting player; reaches round four.",
+    "players": 4,
+    "event": "useCard"
   },
   {
     "mode": "stone",
     "name": "炉石",
     "declared_connect": false,
-    "tested": false
+    "tested": true,
+    "local_support": true,
+    "cloud_host_support": "not exposed by upstream connect API",
+    "natural_completion": false,
+    "evidence": "evidence/local-stone.json",
+    "result": "Representative local rule loop running; no fatal error; not network enabled by upstream.",
+    "players": 3,
+    "event": "phase"
   },
   {
     "mode": "brawl",
     "name": "乱斗",
     "declared_connect": false,
-    "tested": false
+    "tested": true,
+    "local_support": true,
+    "cloud_host_support": "not exposed by upstream connect API",
+    "natural_completion": false,
+    "evidence": "evidence/local-brawl-start.json",
+    "result": "Representative local rule loop running; no fatal error; not network enabled by upstream. Representative 幻化之战 starts underlying identity rules locally; this is not proof of cloud-enabled brawl menu.",
+    "players": 8,
+    "event": "useCard"
   }
 ]

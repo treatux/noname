@@ -7066,7 +7066,9 @@ ${e instanceof Error ? e.stack : String(e)}`);
 
 		let clients = game.players.concat(game.dead, game.additionaldead || []);
 		for (let i = 0; i < clients.length; i++) {
-			if (clients[i].isOnline2()) {
+			// Replacement modes retain plain {name, stat} records in additionaldead.
+			// They contribute statistics but are not network Player instances.
+			if (clients[i].isOnline2?.()) {
 				clients[i].send(game.over, dialog.content.innerHTML, game.checkOnlineResult(clients[i]), poptipData);
 			}
 		}

@@ -26,6 +26,9 @@ async function buildPreload() {
 	await build({
 		root,
 		configFile: false,
+		define: {
+			"import.meta.env.NONAME_TEST_PACKAGED": JSON.stringify(process.env.NONAME_TEST_PACKAGED || "0"),
+		},
 		build: {
 			outDir: preloadOutDir,
 			emptyOutDir: true,
@@ -88,4 +91,12 @@ patchAndroidAssets();
 if (process.env.NONAME_TEST_SILENT === "1") {
 	rmSync(resolve(root, "android/app/src/main/assets/public/audio"), { recursive: true, force: true });
 	console.log("Silent test APK: audio assets omitted; game rules and modes preserved.");
+}
+
+// APK incremental ZIP rewriting can retain megabytes of deleted asset data.
+// Clean generated package state when switching resource variants.
+if (process.env.NONAME_TEST_SILENT === "1" || process.env.NONAME_TEST_PACKAGED === "1") {
+	for (const path of ["outputs/apk/debug", "intermediates/incremental/packageDebug", "intermediates/incremental/mergeDebugAssets"]) {
+		rmSync(resolve(root, "android/app/build", path), { recursive: true, force: true });
+	}
 }

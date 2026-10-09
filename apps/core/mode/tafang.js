@@ -766,7 +766,9 @@ export default {
 				},
 				async (event, trigger, player) => {
 					if (event.currentPlayers.length > 0) {
-						game.gameDraw(game.me, 4, event.currentPlayers);
+						// Before the first recruit, game.me is the spectator placeholder,
+						// not part of the arranged player ring used by gameDraw.
+						game.gameDraw(event.currentPlayers[0], 4, event.currentPlayers);
 						for (const target of event.currentPlayers) {
 							game.triggerEnter(target);
 						}

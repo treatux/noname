@@ -116,6 +116,25 @@ export default async function preload({ lib, game }) {
 	await hideSystemBars();
 	App.addListener("resume", hideSystemBars).catch(() => {});
 
+	// Read-only packaged test client: no second copy of the complete game via SAF.
+	// Enabled only by the cloud validation build; default upstream SAF is unchanged.
+	if (import.meta.env.NONAME_TEST_PACKAGED === "1") {
+		const read = async (name: string) => {
+			const response = await fetch(new URL(name.replace(/^\/+/, ""), location.origin + "/"));
+			if (!response.ok) throw new Error(`Packaged asset missing: ${name} (${response.status})`);
+			return response;
+		};
+		game.readFile = (name: string, ok: Function, fail?: Function) => read(name).then(r => r.arrayBuffer()).then(data => ok(data)).catch(e => callbackError(fail, e));
+		game.readFileAsText = (name: string, ok: Function, fail?: Function) => read(name).then(r => r.text()).then(data => ok(data)).catch(e => callbackError(fail, e));
+		game.checkFile = (name: string, ok: Function) => read(name).then(() => ok(1)).catch(() => ok(-1));
+		game.checkDir = (_name: string, ok: Function) => ok(-1);
+		game.getFileList = (_name: string, ok: Function) => ok([], []);
+		game.writeFile = (_data: unknown, _path: string, _name: string, callback?: Function) => callbackError(callback, new Error("Packaged test client is read-only; extensions/export writes are disabled"));
+		game.exit = () => App.exitApp();
+		game.open = (url: string) => window.open(url);
+		return;
+	}
+
 	let access = await SafFs.hasAccess();
 	if (!access.granted) {
 		access = await SafFs.requestAccess();

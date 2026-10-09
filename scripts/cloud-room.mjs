@@ -4,6 +4,7 @@ const root='/root/noname-cloud/evidence';
 const browser=await chromium.launch({executablePath:'/root/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome',headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
 const events=[];
 let activeHost;
+let androidBrowser;
 const mode=process.env.TEST_MODE||'identity';
 const seconds=Number(process.env.TEST_SECONDS||600);
 const runName=process.env.RUN_NAME||mode;
@@ -11,21 +12,25 @@ const samples=[];
 const started=Date.now();
 async function until(page,fn,timeout=60000){const end=Date.now()+timeout;while(Date.now()<end){try{if(await page.evaluate(fn))return;}catch{}await page.waitForTimeout(500);}throw new Error('State wait timed out: '+fn.toString().slice(0,120));}
 async function boot(name){
- const context=await browser.newContext();const page=await context.newPage();
+ const isAndroid=name==='client'&&!!process.env.ANDROID_CDP;
+ let context,page;
+ if(isAndroid){androidBrowser=await chromium.connectOverCDP(process.env.ANDROID_CDP);context=androidBrowser.contexts()[0];page=context.pages()[0]||await context.newPage();}
+ else {context=await browser.newContext();page=await context.newPage();}
+ const base=isAndroid?'https://localhost':'http://127.0.0.1:18091';
  await page.addInitScript(()=>{const Native=WebSocket;window.cloudNet={sent:0,received:0,messages:0};window.WebSocket=class extends Native{constructor(...args){super(...args);this.addEventListener('message',e=>{window.cloudNet.received+=typeof e.data==='string'?new TextEncoder().encode(e.data).length:0;window.cloudNet.messages++;});}send(data){window.cloudNet.sent+=typeof data==='string'?new TextEncoder().encode(data).length:0;return super.send(data);}};});
- await page.route('**/preload.js',route=>route.fulfill({status:404,body:''}));
+ if(!isAndroid)await page.route('**/preload.js',route=>route.fulfill({status:404,body:''}));
  page.on('pageerror',e=>{events.push({name,error:String(e)});console.log('pageerror',name,String(e));});
- page.on('console',m=>{if(m.type()==='error')console.log('console',name,m.text().slice(0,500));});
+ page.on('console',m=>{if(m.type()==='error'){const text=m.text();console.log('console',name,text.slice(0,500));if(/(?:TypeError|ReferenceError|SyntaxError|RangeError):/.test(text))events.push({name,consoleError:text});}});
  page.on('response',r=>{if(r.status()>=400||r.url().endsWith('.ts'))console.log('response',r.status(),r.url());});
  page.on('framenavigated',f=>{if(f===page.mainFrame())console.log('navigation',name,f.url());});
  page.on('dialog',async d=>{events.push({name,dialog:d.message()});console.log('dialog',name,d.message().slice(0,200));if(d.message().includes('重置')||d.message().includes('未正常')||d.message().includes('邀请链接'))await d.dismiss();else await d.accept();});
  await page.route('**/cloud-seed.html',route=>route.fulfill({contentType:'text/html',body:'<!doctype html><title>seed</title>'}));
- await page.goto('http://127.0.0.1:18091/cloud-seed.html',{waitUntil:'domcontentloaded',timeout:20000});
+ await page.goto(base+'/cloud-seed.html',{waitUntil:'domcontentloaded',timeout:20000});
  await page.evaluate(async()=>{
   localStorage.setItem('gplv3_noname_alerted','true');localStorage.setItem('noname_0.9_loadtime','120000');sessionStorage.setItem('isJITReloaded','true');sessionStorage.setItem('canUseTs','true');
-  await new Promise((resolve,reject)=>{const r=indexedDB.open('noname_0.9_data',4);r.onupgradeneeded=()=>{for(const n of ['config','data','image','audio'])if(!r.result.objectStoreNames.contains(n))r.result.createObjectStore(n);if(!r.result.objectStoreNames.contains('video'))r.result.createObjectStore('video',{keyPath:'time'});};r.onerror=reject;r.onsuccess=()=>{const db=r.result;const tx=db.transaction('config','readwrite');const s=tx.objectStore('config');for(const [k,v] of Object.entries({mode:'connect',new_tutorial:true,show_splash:'off',version:'1.11.7',characters:['standard','shenhua','refresh'],cards:['standard','extra'],extensions:[],totouched:true,touchscreen:false,game_speed:'vvfast',connect_mode:'identity',connect_read_clipboard:false,background_music:'music_off',volumn_audio:0,volumn_background:0}))s.put(v,k);tx.oncomplete=()=>{db.close();resolve();};};});
+  await new Promise((resolve,reject)=>{const r=indexedDB.open('noname_0.9_data',4);r.onupgradeneeded=()=>{for(const n of ['config','data','image','audio'])if(!r.result.objectStoreNames.contains(n))r.result.createObjectStore(n);if(!r.result.objectStoreNames.contains('video'))r.result.createObjectStore('video',{keyPath:'time'});};r.onerror=reject;r.onsuccess=()=>{const db=r.result;const tx=db.transaction('config','readwrite');const s=tx.objectStore('config');for(const [k,v] of Object.entries({mode:'connect',new_tutorial:true,show_splash:'off',version:'1.11.7',read_clipboard_mode_config_connect:false,characters:['standard','shenhua','refresh'],cards:['standard','extra'],extensions:[],totouched:true,touchscreen:false,game_speed:'vvfast',connect_mode:'identity',connect_read_clipboard:false,background_music:'music_off',volumn_audio:0,volumn_background:0}))s.put(v,k);tx.oncomplete=()=>{db.close();resolve();};};});
  });
- await page.goto('http://127.0.0.1:18091/',{waitUntil:'domcontentloaded'});
+ await page.goto(base+'/',{waitUntil:'domcontentloaded'});
  await page.waitForTimeout(2000);
  console.log('before-ready',name,await page.evaluate(async()=>{const {lib,ui}=await import('/noname.js');return {version:lib.version,mode:lib.config?.mode,characters:Object.keys(lib.character).length,ip:!!ui.ipnode,body:document.body.innerText.slice(0,600),resources:performance.getEntriesByType('resource').filter(r=>r.name.includes('init')||r.name.endsWith('.ts')).map(r=>r.name)};}));
  await until(page,async()=>{const {ui,lib}=await import('/noname.js');return !!ui.ipnode&&Object.keys(lib.character).length>10;});
@@ -63,9 +68,20 @@ try{
   await client.evaluate(async()=>{const {game}=await import('/noname.js');game.ws._nocallback=true;game.ws.close();});
   await host.waitForTimeout(5000);
   const after=await host.evaluate(async()=>{const {game,_status,lib}=await import('/noname.js');return {round:game.roundNumber,hosting:game.onlineroom,over:_status.over,event:_status.event?.name,clients:lib.node.clients.length};});
+  // Persist outage evidence before trying recovery, including any stalled wait.
+  disconnect={before,after};
+  await fs.writeFile(root+'/'+runName+'-disconnect.json',JSON.stringify(disconnect,null,2));
   await client.reload({waitUntil:'domcontentloaded'});
+  await until(client,async()=>{const {ui,game}=await import('/noname.js');return !!ui.ipbutton||!!game.me;},60000);
+  disconnect.reloadState=await client.evaluate(async()=>{const {game,lib,ui}=await import('/noname.js');return {online:game.online,id:game.onlineID,reconnect:lib.config.reconnect_info,lastIP:lib.config.last_ip,needsConnect:!!ui.ipbutton};});
+  // Upstream does not auto-connect on page reload. Use the normal connection UI
+  // so its callback restores the saved onlineID and room before roomlist arrives.
+  if(disconnect.reloadState.needsConnect){
+   await client.evaluate(async()=>{const {ui,lib}=await import('/noname.js');ui.ipnode.textContent=lib.config.reconnect_info?.[0]||'ws://127.0.0.1:18082';ui.ipbutton.click();});
+  }
   await until(client,async()=>{const {game}=await import('/noname.js');return !!game.onlineID&&!!game.me;},60000);
-  disconnect={before,after,reconnected:await client.evaluate(async()=>{const {game}=await import('/noname.js');return {id:game.onlineID,name:game.me?.name,online:game.online};})};
+  disconnect.reconnected=await client.evaluate(async()=>{const {game}=await import('/noname.js');return {id:game.onlineID,name:game.me?.name,online:game.online,hosting:game.onlineroom};});
+  await client.evaluate(async()=>{const {ui,_status}=await import('/noname.js');if(!_status.auto)ui.click.auto('forced');});
   await fs.writeFile(root+'/'+runName+'-disconnect.json',JSON.stringify(disconnect,null,2));
  }
  for(let i=0;i<seconds;i++){await host.waitForTimeout(1000);if(i%5===0){const sample=await host.evaluate(async()=>{const {game,_status}=await import('/noname.js');return {round:game.roundNumber,event:_status.event?.name,auto:_status.auto,over:_status.over,players:game.players.map(p=>({name:p.name,hp:p.hp,hand:p.countCards('h')})),dead:game.dead.length,network:window.cloudNet,heap:performance.memory?.usedJSHeapSize};});samples.push({elapsed:Date.now()-started,...sample});console.log('progress',JSON.stringify(sample));await fs.writeFile(root+'/'+runName+'-samples.json',JSON.stringify(samples,null,2));}if(await host.evaluate(async()=>{const {_status}=await import('/noname.js');return !!_status.over;}))break;}
@@ -74,4 +90,4 @@ try{
  await fs.writeFile(root+'/'+runName+'-room.json',JSON.stringify(result,null,2));
  await host.screenshot({path:root+'/'+runName+'-host.png'});await client.screenshot({path:root+'/'+runName+'-client.png'});
  console.log(JSON.stringify(result,null,2));
-}catch(e){console.error(e);if(activeHost){try{await fs.writeFile(root+'/'+runName+'-failure-state.json',JSON.stringify(await activeHost.evaluate(async()=>{const {game,lib,_status}=await import('/noname.js');return {mode:lib.config.mode,config:lib.configOL,event:_status.event?.name,waiting:_status.waitingForPlayer,paused:_status.paused,over:_status.over,players:game.players.map(p=>({name:p.name,hp:p.hp})),body:document.body.innerText.slice(-1500)};}),null,2));}catch{}}await fs.writeFile(root+'/cloud-room-errors.json',JSON.stringify(events,null,2));process.exitCode=1;}finally{await browser.close();}
+}catch(e){console.error(e);if(activeHost){try{await fs.writeFile(root+'/'+runName+'-failure-state.json',JSON.stringify(await activeHost.evaluate(async()=>{const {game,lib,_status}=await import('/noname.js');return {mode:lib.config.mode,config:lib.configOL,event:_status.event?.name,waiting:_status.waitingForPlayer,paused:_status.paused,over:_status.over,players:game.players.map(p=>({name:p.name,hp:p.hp})),body:document.body.innerText.slice(-1500)};}),null,2));}catch{}}await fs.writeFile(root+'/cloud-room-errors.json',JSON.stringify(events,null,2));process.exitCode=1;}finally{await browser.close();if(androidBrowser)await androidBrowser.close();}

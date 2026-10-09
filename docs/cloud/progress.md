@@ -8,11 +8,11 @@
 - `evidence/identity-complete.json` 和 `evidence/identity-stable-room.json` 保存云端与客户端结束状态、统计和胜负文本。
 - Android 完整 debug 构建成功，APK 1,310,050,758 bytes；模拟器因空间不足未安装成功。
 - debug 客户端调整为加载 APK 内置资源，不再固定访问模拟器 8080；开启 WebView 调试用于验证。
-- 无音频测试包通过 NONAME_TEST_SILENT=1 可选构建，保留规则、模式和图片，正在重新打包。
+- 无音频测试包通过 NONAME_TEST_SILENT=1 可选构建，保留规则、模式和图片，正在重新打包。完整 APK 最终流式安装也因空间不足失败。
 
 ## 进行中
 
-- 斗地主、单挑、国战、对决 1v1 均已进入回合，等待自然结算；未把进入回合当成完成一局。
+- 斗地主、单挑均已自然结算；国战、对决 1v1 已进入回合，等待自然结算。
 - 同时运行多个模式的 CPU/RSS 采样保存于 evidence/concurrent-processes.jsonl；当前测试含玩家浏览器与模拟器背景负载，不能直接推断单房间纯服务开销。
 
 ## 必须补充
@@ -37,3 +37,13 @@
 ## 当前本地服务
 
 18081 Vite、18089 开发文件服务、18082 WS 大厅、18091 正式构建文件服务。尚未配置公网反向代理。
+
+## 本次继续核验（以 evidence 原始记录为准）
+
+- `identity-reconnect4-disconnect.json`：玩家 WebSocket 断开后云端 hosting=true、clients=0、over=false；回合由主持继续推进。页面重新加载不自动连接，点击正常连接按钮恢复原 onlineID=8774083162 / 角色 re_liaohua，随后的样本推进到第三轮。浏览器证明，不等同 Android 已验证。
+- 对决1v1自然结算已有双方 over=true；但日志捕获主持 `clients[i].isOnline2 is not a function`。原因：换将的 additionaldead 是纯统计记录，非 Player。已用可选方法调用最小修补；`versus-patched` 回归运行中，不能先宣称无错误通过。
+- 本地挑战、炉石、战棋、乱斗代表场景进入真实规则循环，JSON 中玩家与行动事件非空、无 fatal。乱斗选中默认幻化之战并点击「斗」，不是仅打开菜单；不证明乱斗菜单联机可用。
+- 塔防首次 gameDraw 崩溃：初期 game.me 为旁观占位节点，不在玩家链。调用改为实际新角色 event.currentPlayers[0]；`local-tafang-patched.json` 到第四轮、无 fatal。仅修最小调用，不重写模式。
+- 国战首轮测试意外页面跳转导致采样失败；第二次有效运行 `guozhan3` 继续等待自然结算。不得当作通过。
+- 无音频 APK 首次仍约1.309GB，ZIP条目压缩合计约657MB；清理生成的 packageDebug 增量状态后完整构建成功，628MiB。包体支持检查发现默认 SAF 还要求另一份游戏目录，因此增加显式只读内置资源测试开关 NONAME_TEST_PACKAGED=1，默认行为保持不变；最终此变体重新构建中，安装待验证。
+- `docs/cloud/android-test.md` 记录测试签名、只读/静音限制、adb reverse / SSH 访问方式、实机验证步骤。尚未配置无线公网 WSS。
