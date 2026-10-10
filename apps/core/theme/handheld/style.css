@@ -9,7 +9,7 @@ html {
  --hh-focus: #80e0bd;
  color: var(--hh-ink);
  text-shadow: 0 1px 2px #101716;
- background: radial-gradient(ellipse at 50% 35%, #354442, #151e22 85%) fixed;
+ background: #19272b url('./battlefield.svg') center / cover fixed;
 }
 /* Keep the existing layout's eight-seat coordinates and avatar resources. */
 .player, .button.character {
@@ -18,6 +18,24 @@ html {
 }
 .player .avatar, .player .avatar2, .button.character .avatar {
  border-radius: 5px;
+}
+/* Decorate native avatars, not player pseudo-elements (used for targeting).
+ * The ornament stays inside the original rectangle and never intercepts input.
+ */
+.player .avatar::after, .player .avatar2::after {
+ content: "";
+ position: absolute;
+ inset: 0;
+ background: url('./dragon-frame.svg') center / 100% 100% no-repeat;
+ pointer-events: none;
+}
+.player.selectable:not(.selected) {
+ outline: 2px solid #dbbb7b;
+ outline-offset: 1px;
+}
+.player.selected::after, .card.selected::after,
+.button.character.selected::after {
+ box-shadow: 0 0 8px #80e0bd90;
 }
 .player .name, .player .name2 {
  color: #fff2cf;
@@ -64,7 +82,7 @@ html {
 /* Skin shared controls without covering or moving hit targets. */
 .control, #system > div > div, .menubutton, .menu-button {
  color: var(--hh-ink);
- background: linear-gradient(#41423a, #252e2c);
+ background: linear-gradient(#66685f, #343f3b 48%, #202a28 52%, #41483e);
  border-radius: 6px;
  box-shadow: inset 0 0 0 1px #af915a, 0 2px 4px #0006;
  text-shadow: 0 1px 2px #000;

@@ -63,6 +63,22 @@ try {
    if (!_status.auto) ui.click.auto('forced');
   });
   await page.waitForTimeout(5000);
+  const naturalSeconds = Number(process.env.TEST_NATURAL_SECONDS || 0);
+  if (naturalSeconds) {
+   const deadline = Date.now() + naturalSeconds * 1000;
+   while (Date.now() < deadline) {
+    const over = await page.evaluate(async () => {
+     const { ui, game, _status } = await import('/noname.js');
+     if (!_status.auto && !_status.paused2) ui.click.auto('forced');
+     return !!_status.over;
+    });
+    if (over) {
+     await page.screenshot({ path: `${evidence}/handheld-${mode}-natural-result.png` });
+     break;
+    }
+    await page.waitForTimeout(1000);
+   }
+  }
   await page.screenshot({ path: `${evidence}/handheld-${mode}-battle.png` });
   const report = await page.evaluate(async () => {
    const { lib, game, ui, _status } = await import('/noname.js');
@@ -122,7 +138,9 @@ try {
   });
   await page.screenshot({ path: `${evidence}/handheld-${mode}-fallback.png` });
   report.errors = errors;
-  report.presentationPassed = report.themeLoaded && geometry.unchanged && geometry.themeRemoved && report.fallback.originalThemeRemoved && errors.length === 0;
+  const expectedSeats = { identity: 8, guozhan: 8, doudizhu: 3 }[mode];
+  report.expectedSeats = expectedSeats;
+  report.presentationPassed = report.themeLoaded && geometry.unchanged && geometry.themeRemoved && report.fallback.originalThemeRemoved && errors.length === 0 && (!expectedSeats || report.players === expectedSeats);
   report.aiUseCardObserved = report.useCardHistory > 0;
   report.passed = report.presentationPassed;
   // Style acceptance is separate from AI/human action acceptance.

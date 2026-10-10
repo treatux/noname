@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 200" preserveAspectRatio="none">
+<!-- Original cloud theme ornament, authored for this project; no reference art. -->
+<defs><linearGradient id="metal" x2="1" y2="1"><stop stop-color="#fff0bc"/><stop offset=".3" stop-color="#8a6b39"/><stop offset=".55" stop-color="#dbc18b"/><stop offset="1" stop-color="#574933"/></linearGradient></defs>
+<rect x="2" y="2" width="156" height="196" rx="6" fill="none" stroke="#172326" stroke-width="4"/>
+<rect x="3" y="3" width="154" height="194" rx="5" fill="none" stroke="url(#metal)" stroke-width="2"/>
+<g fill="#35433e" stroke="url(#metal)" stroke-width="1.5" stroke-linejoin="round">
+<path d="M126 3 Q145 4 151 17 Q154 28 143 32 L148 22 L140 24 L142 15 L133 19 L128 12 L116 10 Z"/>
+<path d="M153 28 Q134 33 147 49 Q161 63 145 78 Q139 83 143 93 Q157 106 148 119 L157 116 Q161 102 151 91 Q144 83 154 74 Q169 57 153 43 Q146 37 156 34 Z"/>
+<path d="M145 20 L140 5 L150 12 L155 6 L155 20 L149 26 Z"/>
+<path d="M148 119 Q151 139 146 151 Q137 169 153 180 L150 190 L134 196 L158 196 L158 175 Q143 168 154 153 Q164 140 157 124 Z"/>
+<path d="M3 24 L3 3 L25 3 L14 10 L9 9 L10 16 Z M3 174 L3 197 L27 197 L17 190 L10 191 L10 182 Z"/>
+</g><circle cx="149" cy="19" r="1.7" fill="#b9f1cf"/>
+<path d="M148 31 L132 34 M150 51 L158 49 M150 71 L157 74 M147 95 L156 92 M150 139 L158 139 M149 161 L155 164" stroke="#eed39a" fill="none"/>
+</svg>

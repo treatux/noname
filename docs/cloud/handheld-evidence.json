@@ -1,0 +1,115 @@
+{
+  "theme": "handheld",
+  "physicalPhone": false,
+  "localPresentation": [
+    "identity",
+    "doudizhu",
+    "guozhan"
+  ],
+  "remote": {
+    "autoConfirmTargetCard": {
+      "card": "sha",
+      "target": "guanqiujian",
+      "trustedInput": true,
+      "evidence": "handheld-stream-autoconfirm.json"
+    },
+    "explicitConfirmResponse": {
+      "card": "shan",
+      "trustedInput": true,
+      "evidence": "handheld-stream-explicit-confirm.json"
+    },
+    "sameActionCardTargetExplicitConfirm": false,
+    "manualSkill": false,
+    "naturalOver": false
+  },
+  "performance": {
+    "accepted": false,
+    "reason": "Paused scene video framesDecoded delta=0 in all four windows; CDP render comparison lost theme link and failed. Container CPU samples are not isolated render/encoding cost.",
+    "windows": [
+      {
+        "theme": "simple",
+        "cpuMedian": 32.01,
+        "samples": 8,
+        "seconds": 17.16602392578125,
+        "decodedFramesDelta": 0,
+        "memory": "1.451GiB / 6GiB"
+      },
+      {
+        "theme": "handheld",
+        "cpuMedian": 41.4,
+        "samples": 8,
+        "seconds": 17.4692509765625,
+        "decodedFramesDelta": 0,
+        "memory": "1.446GiB / 6GiB"
+      },
+      {
+        "theme": "simple",
+        "cpuMedian": 41.5,
+        "samples": 8,
+        "seconds": 17.1423720703125,
+        "decodedFramesDelta": 0,
+        "memory": "1.45GiB / 6GiB"
+      },
+      {
+        "theme": "handheld",
+        "cpuMedian": 39.33,
+        "samples": 8,
+        "seconds": 17.37738916015625,
+        "decodedFramesDelta": 0,
+        "memory": "1.463GiB / 6GiB"
+      }
+    ]
+  },
+  "artifacts": [
+    {
+      "path": "/root/noname-cloud/evidence/handheld-identity-runtime.json",
+      "sha256": "4d6486b74a7fd2c970428d57438741730329c263877009f224457cb5b0957fd8"
+    },
+    {
+      "path": "/root/noname-cloud/evidence/handheld-doudizhu-runtime.json",
+      "sha256": "9e56a83e18df5a2dbd1f2b51d3b4b463227fb9e09cab963b0dad2886932b6342"
+    },
+    {
+      "path": "/root/noname-cloud/evidence/handheld-guozhan-runtime.json",
+      "sha256": "7c5a8b4fce078559ea260fad56ae06f93dc288c1e728c5d296cda7e9d32068fc"
+    },
+    {
+      "path": "/root/noname-cloud/evidence/handheld-stream-autoconfirm.json",
+      "sha256": "7865f26094d072ae6dc09fc92bdf7e4b6f029bdaf65b5f2a835d7cf25283e976"
+    },
+    {
+      "path": "/root/noname-cloud/evidence/handheld-stream-explicit-confirm.json",
+      "sha256": "4cc7db729643207c446eb8d7231e896280a218d2d14c98a4a4cc0a3173fb3faa"
+    },
+    {
+      "path": "/root/noname-cloud/evidence/handheld-stream-target.png",
+      "sha256": "cffa02cd970a97173d3eae659b28727729f7bc6537d4a1c694015f97dc19c37f"
+    },
+    {
+      "path": "/root/noname-cloud/evidence/handheld-stream-confirm.png",
+      "sha256": "0182ae7e6b9767e5c8959f9d2e64f0bda666c04082675db9f5cf05a383cead68"
+    },
+    {
+      "path": "/root/noname-cloud/evidence/handheld-stream-client.png",
+      "sha256": "ecf408dc8326860f3a0f63915f456fc04b1c0617f96e3ea57d068d9edc80599f"
+    },
+    {
+      "path": "/root/noname-cloud/evidence/handheld-build-v2.log",
+      "sha256": "1e3d6d8a273122eeee25f9100bd07ecd0301a1e1c75410bc20bc68c4176930f0"
+    },
+    {
+      "path": "/root/noname-cloud/evidence/handheld-stream.log",
+      "sha256": "b601db4ea2db69ff297befa103b80209cdc83982b6960660d2a3289327e2393a"
+    },
+    {
+      "path": "/root/noname-cloud/evidence/handheld-render-v2.log",
+      "sha256": "b3be994c2e49b09ea61e57c5055f2f74a3b2cf54ba409001d37e5f3f65a206cf"
+    }
+  ],
+  "localIdentityAI": {
+    "seconds": 180,
+    "useCardHistory": 48,
+    "over": false,
+    "pageErrors": []
+  }
+}

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" preserveAspectRatio="xMidYMid slice">
+<!-- Original static ink landscape; no downloaded artwork or runtime effects. -->
+<defs><radialGradient id="sky"><stop stop-color="#786d55"/><stop offset=".65" stop-color="#394441"/><stop offset="1" stop-color="#19272b"/></radialGradient><linearGradient id="mist" x2="0" y2="1"><stop stop-color="#e4ce9b" stop-opacity=".16"/><stop offset="1" stop-color="#172728" stop-opacity=".8"/></linearGradient></defs>
+<path fill="url(#sky)" d="M0 0h1280v720H0z"/>
+<path fill="#708076" opacity=".23" d="M0 475L85 406 117 443 205 321 264 415 338 391 410 447 496 394 600 474 720 432 776 451 857 364 908 428 970 395 1053 290 1114 384 1176 353 1280 470V720H0Z"/>
+<path fill="#182f30" opacity=".48" d="M0 559L101 487 174 552 251 441 306 536 420 478 487 557 595 527 669 570 793 507 851 532 991 474 1072 516 1149 442 1280 533V720H0Z"/>
+<path fill="url(#mist)" d="M0 460h1280v260H0z"/>
+<g stroke="#c1b58d" opacity=".15" fill="none"><path d="M185 682l27-121m-20 88l-14-17m22-16l17-12M1040 715l-15-129m9 61l19-21m-23-8l-18-22M1100 720l20-93m-13 61l-16-17"/><path d="M586 364q9-10 18 0q9-10 18 0m97-49q7-8 14 0q7-8 14 0"/></g>
+</svg>
