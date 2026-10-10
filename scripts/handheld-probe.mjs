@@ -1,7 +1,8 @@
 // Local upstream runtime checks; never loads reference package code.
 import { chromium } from '/root/pi-web/node_modules/playwright/index.mjs';
 import fs from 'node:fs/promises';
-const evidence = '/root/noname-cloud/evidence';
+const evidence = process.env.EVIDENCE_DIR || '/root/noname-cloud/evidence';
+await fs.mkdir(evidence, { recursive: true });
 const browser = await chromium.launch({
  executablePath: '/root/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome',
  headless: true, args: ['--no-sandbox', '--disable-dev-shm-usage'],
@@ -56,13 +57,27 @@ try {
    const { lib, game } = await import('/noname.js');
    return Object.keys(lib.character).length > 10 && game.players.length > 0;
   }, null, { timeout: 60000 });
-  await page.waitForTimeout(2000);
+  await page.waitForFunction(async () => {
+   const { ui, _status } = await import('/noname.js');
+   return ui.auto && ui.arena?.getBoundingClientRect().width > 0 && _status.imchoosing && _status.paused;
+  }, null, { timeout: 90000 });
   await page.screenshot({ path: `${evidence}/handheld-${mode}-selection.png` });
+  // Toggle only after the native chooser exists, not during engine startup.
+  // Native trusted clicks also handle choosers that cannot switch to auto.
+  for (let attempt = 0; attempt < 60; attempt++) {
+   if (await page.locator('.handcards > .card').count()) break;
+   const character = page.locator('.button.character.selectable:not(.selected)').first();
+   if (await character.isVisible()) await character.click();
+   const confirm = page.locator('.control > div').filter({ hasText: /^确定$/ }).first();
+   if (await confirm.isVisible()) await confirm.click();
+   await page.waitForTimeout(500);
+  }
+  await page.waitForFunction(() => document.querySelector('.handcards > .card'), null, { timeout: 30000 });
   await page.evaluate(async () => {
    const { ui, _status } = await import('/noname.js');
    if (!_status.auto) ui.click.auto('forced');
   });
-  await page.waitForTimeout(5000);
+  await page.waitForTimeout(500);
   const naturalSeconds = Number(process.env.TEST_NATURAL_SECONDS || 0);
   if (naturalSeconds) {
    const deadline = Date.now() + naturalSeconds * 1000;
@@ -140,7 +155,7 @@ try {
   report.errors = errors;
   const expectedSeats = { identity: 8, guozhan: 8, doudizhu: 3 }[mode];
   report.expectedSeats = expectedSeats;
-  report.presentationPassed = report.themeLoaded && geometry.unchanged && geometry.themeRemoved && report.fallback.originalThemeRemoved && errors.length === 0 && (!expectedSeats || report.players === expectedSeats);
+  report.presentationPassed = report.themeLoaded && geometry.unchanged && geometry.themePresent && geometry.themeRemoved && report.fallback.originalThemeRemoved && report.fallback.theme === 'simple' && report.fallback.href?.includes('/theme/simple/') && report.stateStyles.card?.selectedOutline === '3px' && report.stateStyles.player?.selectedOutline === '3px' && errors.length === 0 && (!expectedSeats || report.players === expectedSeats);
   report.aiUseCardObserved = report.useCardHistory > 0;
   report.passed = report.presentationPassed;
   // Style acceptance is separate from AI/human action acceptance.
@@ -151,4 +166,7 @@ try {
   if (!report.passed) process.exitCode = 1;
   await context.close();
  }
+} catch (error) {
+ await fs.writeFile(`${evidence}/handheld-probe-failure.json`, JSON.stringify({ passed: false, completedModes: reports.map(r => r.mode), failure: String(error), physicalPhone: false }, null, 2));
+ throw error;
 } finally { await browser.close(); }

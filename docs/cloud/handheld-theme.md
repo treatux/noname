@@ -26,7 +26,7 @@ Base package `game/update.js` reports 1.12.7.0711_β and modified beautification
 
 Evidence files: `/root/noname-cloud/evidence/handheld-runtime.json`, `handheld-runtime.log`, `handheld-*-selection.png`, `handheld-*-battle.png`, `handheld-*-fallback.png`, `handheld-build.log`.
 
-Pending beyond asset recovery/first implementation: actual streamed human card/target/confirm actions, skills, natural end-of-game result interaction, encoding/rendering CPU comparison and physical-phone readability. Dialog styling covers native result dialogs, but this alone is not a gameplay end-to-end acceptance claim. Deployment/default activation is not implied by a local preview or build.
+Historical first-pass pending items (superseded by the dated validation sections below): actual streamed human card/target/confirm actions, skills, natural end-of-game result interaction, encoding/rendering CPU comparison and physical-phone readability. Dialog styling covers native result dialogs, but this alone is not a gameplay end-to-end acceptance claim. Deployment/default activation is not implied by a local preview or build.
 
 ## Historical first-pass results
 
@@ -51,3 +51,31 @@ Endpoint: **https://buzz.webpimy.duckdns.org/cloud-phone/** (existing private Ba
 Hashed evidence index and compact results: `docs/cloud/handheld-evidence.json`. Raw JSON/logs/screenshots: `/root/noname-cloud/evidence/handheld-stream-*`, `handheld-*-runtime.json`. Key screenshot `handheld-stream-target.png` shows the actual eight-player battlefield, cream handcards, gold dragon-like ornaments, native HP and attack line. `handheld-stream-confirm.png` shows the native confirm state.
 
 Limitations: natural themed endstate, manual skills, a valid isolated active encoding comparison, all-mode gameplay acceptance and physical-phone checks are still open. Static styling of result dialogs is not natural-result verification. The upstream tracked localhost key was inspected as a development fixture; see `development-certificate.md`. No unrelated rotation/history rewrite was performed.
+
+## Independent Validate phase (2026-10-10)
+
+Read-only audit script: `scripts/handheld-validate.mjs`. Active decode-only probe: `scripts/handheld-stream-readonly.mjs`. Both keep credentials out of reports. `EVIDENCE_DIR` gives each run a separate evidence directory; existing indexed evidence was not overwritten. Audit reads the **container-local** game server on port 18094 through `docker exec`, not an unbound host port.
+
+### Concrete test fixes and fresh outcomes
+
+The local probe previously toggled auto before the native character chooser was ready and accepted a battlefield with no handcards. Its acceptance boolean did not require selected-card presentation, native simple href or the positive theme token. These were validation-harness defects, not demonstrated CSS/rule defects. It now waits for the native chooser, uses native character/confirm clicks, requires a real handcard, checks 3px selected outlines for both player and card, and records failures separately.
+
+Fresh identity eight-seat and doudizhu three-seat runs pass the stricter predicate, with exact unchanged seat rectangles, native simple fallback, responsive screenshots and no page errors. Each observed one AI useCard event; these are not remote user input claims. Fresh guozhan eight-seat startup DOM was reached, but the retained selection screenshot is blank and the new handcard wait timed out. Its **current stricter acceptance remains unresolved**; old coordinate/fallback evidence is retained as historical presentation evidence, not silently upgraded. Failed runs/logs are retained in `handheld-validation-local*`.
+
+The existing eleven evidence-index SHA-256 entries are checked against real files, not merely copied into a new report. Archived remote history still contains sha→guanqiujian and shan with trusted input, and decoded-video evidence. The raw `manualTargetUseCard=false` must not be presented as a passing harness outcome: history proves the limited actions independently; the flag is not used to assert full interaction acceptance.
+
+A fresh read-only stream probe observed 1280×720 inbound decoded frames **5→102 (delta 97 over 10 seconds)**. This establishes active host-local WebRTC decoding now, not comparative performance or real-phone experience. It made no game/profile changes.
+
+The live stream unexpectedly already displayed the native **战斗失败** result dialog. A direct read-only page CDP snapshot confirms handheld, identity, upstream 1.11.7, round 8, over=true, 3 alive + 5 dead and 130 useCard history events. Screenshot: `handheld-validation/active-stream.png`; server state: `live-endstate.json`. This is **observed themed endstate**, not a continuously witnessed natural-completion sequence or restart-button interaction. No game.over/HP/rule mutation was issued by this validation phase.
+
+### Reference fidelity, not a replica claim
+
+Direct visual comparison with the saved preview image shows the same design vocabulary: battlefield landscape, vertical native hero illustrations, gold/dragon-like trim, green HP, cream handcards and metal controls. Important differences remain: polygonal static mountains rather than painted war-camp art; thin original ornament rather than sculpted/dynamic reference dragons; upstream left-side self avatar rather than the reference right-side enlarged skill panel; stock card labels/images and upstream eight-seat system/record controls. No pixel fidelity, identical art, enlarged reference touch targets or reference-layout equivalence is claimed. Eight-seat geometry preservation is deliberate, not proof of phone usability.
+
+Service remains online at https://buzz.webpimy.duckdns.org/cloud-phone/ with existing private authentication; noname-stream healthy, unauthenticated endpoint 401. No unrelated restarts, certificate edits or history rewrite. Full workflow acceptance remains open: same-attack explicit confirmation, manual skills, continuously observed natural finish/result interaction, fresh guozhan gameplay, isolated rendering/encoding comparison, physical phone readability/touch/audio/external network and **thermal/battery** testing.
+
+### Independently rechecked archive integrity
+
+Both actual archive files were streamed again for size/SHA-256/MD5 and tested again with `7z t`; both report Everything is Ok (base 33952 files, patch 1032 files). Base: 5,726,639,341 bytes, SHA-256 `8edaf3c62c743cb541ab59a57cdfa68e3b0a45bee0854091e8fbd1b082098eb5`, MD5 `7b86539537860d2c71a0beeda8e60e62`. Patch: 237,789,261 bytes, SHA-256 `e693aa3dad37abd45a5fd5a7859a6dbadb33925b98df36249b356af9c1bf0164`, MD5 `a695720b053b356bc9af241f31a48b03`. Both still mismatch advertised MD5; that fact is recorded, not made a new user-approval gate. Remaining download bytes for these two authorized archives: **0**. The resumable downloader already finished normally; there is no incomplete transfer to keep active. Optional APK/static-skin/skeleton branches remain not downloaded and are not prerequisites for this independent theme.
+
+Audit outcome: `handheld-validation/audit.json` passed archive/hash/deployment/archived-action checks. All eleven historical evidence hashes match. CSS and both SVGs are byte-identical between source, dist and responses from the dedicated game server. Final hashed validation index: `docs/cloud/handheld-validation.json`. These bounded audit passes do not set overall UX acceptance to complete.

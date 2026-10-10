@@ -1,0 +1,123 @@
+{
+  "phase": "Validate",
+  "overallUXAccepted": false,
+  "archiveRemainingBytes": 0,
+  "archiveAuditPassed": true,
+  "historicalEvidenceHashesMatched": 11,
+  "sourceBuiltDedicatedServerEqual": true,
+  "freshLocal": {
+    "identity": {
+      "passed": true,
+      "seats": 8,
+      "aiUseCard": 1
+    },
+    "doudizhu": {
+      "passed": true,
+      "seats": 3,
+      "aiUseCard": 1
+    },
+    "guozhan": {
+      "passed": false,
+      "reason": "Blank selection screenshot and handcard wait timeout; historical presentation is not fresh gameplay acceptance"
+    }
+  },
+  "remote": {
+    "archivedShaTarget": true,
+    "archivedShan": true,
+    "activeDecode": {
+      "width": 1280,
+      "height": 720,
+      "framesBefore": 5,
+      "framesAfter": 102,
+      "delta": 97,
+      "seconds": 10
+    },
+    "observedEndstate": {
+      "theme": "handheld",
+      "over": true,
+      "round": 8,
+      "alive": 3,
+      "dead": 5,
+      "useCardHistory": 130,
+      "continuousNaturalCompletionObserved": false,
+      "resultInteractionTested": false
+    }
+  },
+  "pending": [
+    "same-attack-explicit-confirm",
+    "manual-skill",
+    "fresh-guozhan-gameplay",
+    "continuous-natural-finish-result-interaction",
+    "isolated-render-encoding-comparison",
+    "physical-phone-touch-readability-audio-external-network",
+    "phone-thermal-battery"
+  ],
+  "referenceFidelity": "independent-inspired-not-pixel-replica",
+  "service": "https://buzz.webpimy.duckdns.org/cloud-phone/",
+  "artifacts": [
+    {
+      "path": "/root/noname-cloud/evidence/handheld-validation/audit.json",
+      "sha256": "815f7be38d71a67bf85d08e6d8b877a148fccf6fb6930d7beb700d419cf404a0"
+    },
+    {
+      "path": "/root/noname-cloud/evidence/handheld-validation/如真似幻.7z.crc.txt",
+      "sha256": "01084d1764ded039352e5ac70e12b0b9a8b97903a084d58d72d648333e803c46"
+    },
+    {
+      "path": "/root/noname-cloud/evidence/handheld-validation/纯净懒人包7.21.zip.crc.txt",
+      "sha256": "87a715079799a8ebe2b6ef6195c55e53bbe58b6021fd3e53d5511e22334d50a6"
+    },
+    {
+      "path": "/root/noname-cloud/evidence/handheld-validation/active-stream.json",
+      "sha256": "5bb59d6b0cf560d3588492a2cf36f26ba18d164109d3119f321faff96cf7457f"
+    },
+    {
+      "path": "/root/noname-cloud/evidence/handheld-validation/active-stream.png",
+      "sha256": "7791cd1b99125a8ab78de52f91e2894c7fdb489b3dda09030157e34cb6c0dfe5"
+    },
+    {
+      "path": "/root/noname-cloud/evidence/handheld-validation/live-endstate.json",
+      "sha256": "a33e9a25ef4e219854edf52ceaeb7828538277383147531c474e8088d4acfa8c"
+    },
+    {
+      "path": "/root/noname-cloud/evidence/handheld-validation-local-v4/handheld-identity-runtime.json",
+      "sha256": "9b5e5d63e11922414441d7615637dc9ae1d52ce909a2eb1891cb0eb755100b13"
+    },
+    {
+      "path": "/root/noname-cloud/evidence/handheld-validation-local-v4/handheld-identity-battle.png",
+      "sha256": "9fa3d6767ed7745ffe09888c28d58222e5d15633579ff4c7dfa10b04c0638a92"
+    },
+    {
+      "path": "/root/noname-cloud/evidence/handheld-validation-local-v4/handheld-identity-fallback.png",
+      "sha256": "3194cee465a5dbf69d4da69e3bb391ef9fe490183e53f436d5226af7c927f507"
+    },
+    {
+      "path": "/root/noname-cloud/evidence/handheld-validation-local-v4/handheld-guozhan-selection.png",
+      "sha256": "3878570f4a62a0d65f57cf1754e0269e56ec797f4e36e26b44c172eb6e800401"
+    },
+    {
+      "path": "/root/noname-cloud/evidence/handheld-validation-local-v4.log",
+      "sha256": "73bbec791c42e6b871ea0f13e6733f4415cb9506449d348b22523624eaa53d98"
+    },
+    {
+      "path": "/root/noname-cloud/evidence/handheld-validation-doudizhu/handheld-doudizhu-runtime.json",
+      "sha256": "871f7c5dc68db0d41c1382f34ee52c29570716e108c3c57ed340ad27622a8397"
+    },
+    {
+      "path": "/root/noname-cloud/evidence/handheld-validation-doudizhu.log",
+      "sha256": "021e76e4148829eb62682cc82eef83a29842a6acfd52721b102db38d7ded508c"
+    },
+    {
+      "path": "/root/noname-cloud/evidence/handheld-validation-local.log",
+      "sha256": "5999e9053bc1f85f6b0c3e31096f4254624a0ec3ebc28452c1d22f16a58da300"
+    },
+    {
+      "path": "/root/noname-cloud/evidence/handheld-validation-local-v2.log",
+      "sha256": "cc8b81a557c6032c6bb3f6b6a6c2e0fa4d10d7169bfd781df05cf7b7ccef6f51"
+    },
+    {
+      "path": "/root/noname-cloud/evidence/handheld-validation-local-v3.log",
+      "sha256": "819e50a6fc4a40bef2914d58b87127909f263cc87f6b25460a401c9f279f1587"
+    }
+  ]
+}
