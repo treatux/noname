@@ -71,3 +71,9 @@
 - 长期房主进程可用 `HOST_ONLY=1`；`persistent-identity-entry.json` 保存房间入口、PID与配置，玩家进入后开始托管，不是生产账号/崩溃恢复daemon。
 - `pnpm exec eslint apps/mobile/afterSync.ts apps/mobile/src/preload.ts` 本次exit0；新增脚本node --check与git diff --check通过。前次eslint超时不计通过。
 - 真实手机流畅性仍待小主实测，模拟器系统ANR和秒级应用RTT不能当作实机体验结论。当前目标4/5任务完成，performance-review保留待体验证据。
+
+### 测试入口回归与剩余阻碍
+
+- 长期房主初次启动在game.me尚未初始化时切托管失败；已增加等待实际玩家初始化后再切托管。`persistent-identity-fixed.log` 记录 `persistent host started`，Android客户端ID7240967892实际加入房间19617952724；入口回归通过。
+- 追加触摸用例 `android-touch-current.json` 仍只记录卡牌触摸/确认，未记录成功选目标与提交的useCard历史。疑似原生模态框、poplayer或输入事件处理影响，保留失败/部分证据，不记为手动出牌成功。合成触摸改为CDP标准synthesizeTapGesture用于后续诊断，尚未宣称其改善结果。
+- 单房间/三房间性能报告与数据已交付；总目标仍不能完成：当前仅有Android模拟器，缺少真实手机设备证据或小主实际测试确认。已经完成不依赖真实手机的源码、模式、云端职责、APK、性能数据和报告，并提供phone-experience.md验收单。实机操作/FPS/录屏无法由服务器模拟器代造。

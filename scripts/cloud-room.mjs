@@ -53,14 +53,16 @@ try{
  const host=await boot('host');activeHost=host;
  if(process.env.HOST_HIDE_RENDER==='1')await host.addStyleTag({content:'body>*{visibility:hidden!important}'});
  const config=await host.evaluate(async mode=>{const {lib,game,get}=await import('/noname.js');lib.configOL.mode=mode;const c={};for(const k in lib.mode[mode].connect){if(k!=='update')c[k.slice(8)]=get.config(k,mode);}Object.assign(c,{mode,player_number:mode==='single'||mode==='versus'?'2':mode==='doudizhu'?'3':'8',number:mode==='single'||mode==='versus'?2:mode==='doudizhu'?3:8,identity_mode:'normal',...(mode==='versus'?{versus_mode:'1v1'}:{}),characterPack:['standard','shenhua','refresh'],cardPack:['standard','extra'],banned:[],bannedcards:[],choose_timeout:'10',observe:true});lib.configOL=c;const original=lib.message.client.createroom;lib.message.client.createroom=function(...args){const switchOriginal=game.switchMode;game.switchMode=function(name){game.switchMode=switchOriginal;return switchOriginal.call(game,name,c);};return original.apply(this,args);};game.send('server','create',game.onlineKey,'云端主持','caocao');return c;},mode);
- if(process.env.TEST_CHOOSE_TIMEOUT)await host.evaluate(async timeout=>{const {lib}=await import('/noname.js');lib.configOL.choose_timeout=timeout;},process.env.TEST_CHOOSE_TIMEOUT);
+ if(process.env.TEST_CHOOSE_TIMEOUT){config.choose_timeout=process.env.TEST_CHOOSE_TIMEOUT;await host.evaluate(async timeout=>{const {lib}=await import('/noname.js');lib.configOL.choose_timeout=timeout;},config.choose_timeout);}
  await until(host,async()=>{const {_status}=await import('/noname.js');return _status.waitingForPlayer;},30000);
  const room=await host.evaluate(async()=>{const {game}=await import('/noname.js');return game.roomId;});
  console.log('room',room,JSON.stringify(config));
  if(process.env.HOST_ONLY==='1'){
   await fs.writeFile(root+'/'+runName+'-entry.json',JSON.stringify({room,mode,config,pid:process.pid,address:'ws://127.0.0.1:18082',started:new Date().toISOString()},null,2));
   await until(host,async()=>{const {game}=await import('/noname.js');const {lib}=await import('/noname.js');return lib.node.clients.length>0&&game.connectPlayers?.some(p=>p.playerid);},86400000);
-  await host.evaluate(async()=>{const {ui,_status}=await import('/noname.js');ui.connectStartButton.click();if(!_status.auto)ui.click.auto('forced');});
+  await host.evaluate(async()=>{const {ui}=await import('/noname.js');ui.connectStartButton.click();});
+  await until(host,async()=>{const {game}=await import('/noname.js');return !!game.me;},60000);
+  await host.evaluate(async()=>{const {ui,_status}=await import('/noname.js');if(!_status.auto)ui.click.auto('forced');});
   console.log('persistent host started');
   await new Promise(resolve=>{process.once('SIGTERM',resolve);process.once('SIGINT',resolve);});
  } else {
