@@ -64,7 +64,7 @@
 		"stockmode": ["identity", "guozhan", "versus", "boss", "doudizhu", "single", "chess", "stone", "connect", "brawl", "tafang"],
 		"stockextension": ["boss", "cardpile", "coin"],
 		"layout": ["default", "newlayout"],
-		"theme": ["woodden", "music", "simple"],
+		"theme": ["woodden", "music", "simple", "handheld"],
 		"card_font": ["xiaozhuan", "huangcao", "caoshu", "xingshu"],
 		"double_hp": ["hejiansan", "pingjun", "zuidazhi", "zuixiaozhi", "zonghe"],
 		"image_background_filter": ["default", "blur", "gray", "sepia", "invert", "saturate", "contrast", "hue", "brightness"]

@@ -1,0 +1,129 @@
+/* Independent handheld-inspired theme for upstream 1.11.7.
+ * No reference-package code, artwork, fonts or animation runtimes are bundled.
+ * This stylesheet never changes board geometry, rule state or pointer mapping.
+ */
+html {
+ --hh-ink: #f7ecd3;
+ --hh-gold: #c6a365;
+ --hh-panel: #242c2b;
+ --hh-focus: #80e0bd;
+ color: var(--hh-ink);
+ text-shadow: 0 1px 2px #101716;
+ background: radial-gradient(ellipse at 50% 35%, #354442, #151e22 85%) fixed;
+}
+/* Keep the existing layout's eight-seat coordinates and avatar resources. */
+.player, .button.character {
+ border-radius: 7px;
+ box-shadow: 0 0 0 1px #80683f, inset 0 0 0 2px #1b2424, 0 3px 8px #0008;
+}
+.player .avatar, .player .avatar2, .button.character .avatar {
+ border-radius: 5px;
+}
+.player .name, .player .name2 {
+ color: #fff2cf;
+ text-shadow: 0 1px 3px #000, 1px 0 2px #000;
+}
+.player .identity {
+ text-shadow: 0 1px 3px #000;
+}
+.player .hp > div:not(.lost):not(.shield) {
+ box-shadow: 0 0 0 1px #172f24, inset 0 1px 2px #c8f9c9;
+}
+.player.current_action {
+ box-shadow: 0 0 0 2px var(--hh-gold), 0 0 10px #c6a36570;
+}
+.player.selected, .button.character.selected {
+ outline: 3px solid var(--hh-focus);
+ outline-offset: 2px;
+ box-shadow: 0 0 0 1px #11271f, 0 0 10px #80e0bd70;
+}
+.player.dead {
+ filter: grayscale(.8);
+}
+/* Preserve card faces and suit colours. Never replace card background images. */
+.card {
+ border-radius: 6px;
+ box-shadow: 0 0 0 1px #ae9060, 0 2px 5px #0008;
+}
+.card.selected {
+ outline: 3px solid var(--hh-focus);
+ outline-offset: 1px;
+ box-shadow: 0 0 9px #80e0bd80;
+}
+.card.selectable:not(.selected) {
+ box-shadow: 0 0 0 2px #dbbb7b, 0 2px 5px #0008;
+}
+/* A solid paper base restores contrast for transparent native card faces.
+ * background-color preserves the engine's fullskin/fullimage background-image.
+ */
+#arena .handcards > .card:not(.infohidden):not(.fullimage):not(.fullborder) {
+ background-color: #eee1c4;
+ color: #25231c;
+ text-shadow: none;
+}
+/* Skin shared controls without covering or moving hit targets. */
+.control, #system > div > div, .menubutton, .menu-button {
+ color: var(--hh-ink);
+ background: linear-gradient(#41423a, #252e2c);
+ border-radius: 6px;
+ box-shadow: inset 0 0 0 1px #af915a, 0 2px 4px #0006;
+ text-shadow: 0 1px 2px #000;
+}
+.control > div {
+ min-height: 32px;
+ line-height: 32px;
+ padding-left: 14px;
+ padding-right: 14px;
+}
+.control > div:active, .menubutton:active {
+ background-color: #6a6548;
+}
+.control.disabled, .menubutton.disabled, .menu .disabled {
+ color: #b1b4af;
+ box-shadow: inset 0 0 0 1px #646a62;
+}
+/* Includes native character selection and end-of-game dialogs. */
+.dialog:not(.onlycaption):not(.nobutton), .menu, .menubg, .mebg {
+ color: var(--hh-ink);
+ background: linear-gradient(135deg, #343c35f5, #182523f5);
+ border-radius: 9px;
+ box-shadow: inset 0 0 0 1px var(--hh-gold), 0 5px 14px #0007;
+ text-shadow: 0 1px 2px #111;
+}
+.dialog .caption, .dialog .text.center {
+ color: #f4dca8;
+}
+.dialog.choose-character > .packnode > div {
+ color: #e5dfd0;
+ background: #283431;
+ border-radius: 4px;
+}
+.dialog.choose-character > .packnode > div.active,
+.menu.main > .menu-tab > div.active {
+ color: #ffe4a6;
+ background: #514c38;
+ box-shadow: inset 0 -2px var(--hh-gold);
+}
+.menu.main > .menu-tab > div:not(.active):not(:hover) {
+ color: #d0c5ac;
+}
+.menu input, .menu select {
+ color: var(--hh-ink);
+ background-color: #202b29;
+}
+#mebg, .playerbg {
+ background: linear-gradient(#25332ba0, #172321d9);
+ box-shadow: inset 0 1px #af915a80;
+}
+/* Theme preview uses the existing visual menu DOM. */
+.themebutton.handheld {
+ background: linear-gradient(135deg, #354442, #151e22);
+ box-shadow: inset 0 0 0 2px #c6a365;
+ color: #f7ecd3;
+}
+@media (prefers-reduced-motion: reduce) {
+ .card, .player, .control, .button.character { transition-duration: 0s; }
+}
+@media (max-height: 540px) {
+ .control > div { min-height: 28px; line-height: 28px; padding-left: 10px; padding-right: 10px; }
+}

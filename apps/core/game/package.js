@@ -141,5 +141,6 @@ window.noname_package = {
 		woodden: "木纹",
 		music: "音乐",
 		simple: "简约",
+		handheld: "手杀风·云端",
 	},
 };
