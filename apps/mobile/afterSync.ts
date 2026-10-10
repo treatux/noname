@@ -1,4 +1,4 @@
-import { copyFileSync, existsSync, mkdirSync, readdirSync, renameSync, rmSync } from "fs";
+import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync, renameSync, rmSync } from "fs";
 import { resolve } from "path";
 import { spawnSync } from "child_process";
 import { build } from "vite";
@@ -85,6 +85,36 @@ function patchAndroidAssets() {
 await buildPreload();
 capSync();
 patchAndroidAssets();
+
+// Some WebView versions initialize injected modules before the document import
+// map is usable. Resolve known externals in the optional packaged test assets.
+// This changes generated assets only, not upstream source or the default build.
+if (process.env.NONAME_TEST_PACKAGED === "1") {
+	const assets = resolve(root, "android/app/src/main/assets/public");
+	const indexPath = resolve(assets, "index.html");
+	let html = readFileSync(indexPath, "utf8");
+	const match = html.match(/<script type="importmap">([\s\S]*?)<\/script>/);
+	if (!match) throw new Error("Packaged test assets lack an import map");
+	const imports = JSON.parse(match[1]).imports as Record<string, string>;
+	let changed = 0;
+	function visit(dir: string) {
+		for (const item of readdirSync(dir, { withFileTypes: true })) {
+			const path = resolve(dir, item.name);
+			if (item.isDirectory()) {
+				if (item.name !== "src") visit(path);
+			} else if (item.name.endsWith(".js") || item.name.endsWith(".mjs")) {
+				const original = readFileSync(path, "utf8");
+				const updated = original.replace(/(\bfrom\s*|\bimport\s*\(\s*|\bimport\s*)(["'])(noname|vue|pinyin-pro|dedent)\2/g,
+					(full, prefix, quote, name) => imports[name] ? `${prefix}${quote}${imports[name]}${quote}` : full);
+				if (updated !== original) { writeFileSync(path, updated); changed++; }
+			}
+		}
+	}
+	visit(assets);
+	for (const [name, path] of Object.entries(imports)) html = html.replaceAll(`src="${name}"`, `src="${path}"`);
+	writeFileSync(indexPath, html);
+	console.log(`Packaged WebView externals resolved in ${changed} generated modules.`);
+}
 
 // Optional silent test package for devices with limited storage.
 // The default build keeps all upstream audio resources.

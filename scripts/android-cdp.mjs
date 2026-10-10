@@ -20,6 +20,7 @@ export async function androidPage(endpoint) {
   route:async()=>{},
   goto:async url=>{const r=await send('Page.navigate',{url});if(r.errorText)throw new Error(r.errorText);await new Promise(r=>setTimeout(r,1500));},
   reload:async()=>{await send('Page.reload');await new Promise(r=>setTimeout(r,1500));},
+  tap:async(x,y)=>{await send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y}]});await new Promise(r=>setTimeout(r,80));await send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});},
   waitForTimeout:ms=>new Promise(r=>setTimeout(r,ms)),
   textContent:()=>evaluate(()=>document.body.innerText),
   screenshot:async({path})=>{const r=await send('Page.captureScreenshot',{format:'png'});await fs.writeFile(path,Buffer.from(r.data,'base64'));},
