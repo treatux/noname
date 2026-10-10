@@ -104,3 +104,9 @@ Android初始启动捕获系统及应用ANR，原生ANR/GPL弹窗阻塞CDP；Web
 - 无线公网WSS未部署；ADB/SSH是可复现测试路径。`HOST_ONLY=1` 主持脚本提供长期房主进程与独立entry.json，等待玩家加入后开始并持续托管；不是生产级崩溃恢复daemon。
 - 静音只读APK不评价完整音效、扩展安装或正式更新；真实机型/WebView兼容仍待扩展验证。
 - 工作目标保持运行，不能将上述未验证项降低标准或提前记为完全完成。
+
+## 证据交付索引
+
+Git中的 `evidence-manifest.json` 列出关键原始文件的路径、大小、SHA256及代表局结算状态；统计摘要 `performance-summary.json` 同步保存于本报告目录。完整原始日志/JSON/PNG/进程JSONL位于独立项目 `/root/noname-cloud/evidence/`，未把大体积APK加入Git。当前APK直接文件路径见 `android-test.md`，不宣称提供了公网下载链接。
+
+真实手机验收模板 `phone-experience.md`：请记录设备/WebView、网络、实际选将/出牌、前后台恢复、自然结算和录屏/FPS/操作反馈。缺少这些证据时真实手机体验保持待验证，而不是以模拟器通过自动完成总目标。

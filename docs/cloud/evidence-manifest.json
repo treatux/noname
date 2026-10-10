@@ -1,0 +1,129 @@
+[
+  {
+    "path": "evidence/identity-stable-room.json",
+    "bytes": 15107,
+    "sha256": "f87c739341ab777e72ee8e575f424491a299fc875f7c6450f27e16a8b671899d",
+    "mode": "identity",
+    "host_over": true,
+    "client_over": true,
+    "events": [
+      {
+        "name": "host",
+        "dialog": "是否输入邀请链接以加入房间？"
+      },
+      {
+        "name": "client",
+        "dialog": "是否输入邀请链接以加入房间？"
+      }
+    ],
+    "samples": 9
+  },
+  {
+    "path": "evidence/guozhan3-room.json",
+    "bytes": 38480,
+    "sha256": "f266d7f2d1a41c2c603f11458a7c120a2cad9b088efe1f2ed7ecf7d8882b3034",
+    "mode": "guozhan",
+    "host_over": true,
+    "client_over": true,
+    "events": [],
+    "samples": 36
+  },
+  {
+    "path": "evidence/versus-patched-room.json",
+    "bytes": 15234,
+    "sha256": "ae2915b2633722ca8e153a77b6de5ef775ccc8fdc6929eefcc815f9eee05f901",
+    "mode": "versus",
+    "host_over": true,
+    "client_over": true,
+    "events": [],
+    "samples": 23
+  },
+  {
+    "path": "evidence/doudizhu-room.json",
+    "bytes": 10772,
+    "sha256": "f40c1227bbd883b34f752dc135a0febe3ba704fddf3c199ca9eaa8ebdc179c8f",
+    "mode": "doudizhu",
+    "host_over": true,
+    "client_over": true,
+    "events": [
+      {
+        "name": "host",
+        "dialog": "是否输入邀请链接以加入房间？"
+      },
+      {
+        "name": "client",
+        "dialog": "是否输入邀请链接以加入房间？"
+      }
+    ],
+    "samples": 17
+  },
+  {
+    "path": "evidence/single-room.json",
+    "bytes": 13983,
+    "sha256": "975245241169dba9545a268b8dc92ac53add0c029098797487120f1c92fa0d1e",
+    "mode": "single",
+    "host_over": true,
+    "client_over": true,
+    "events": [
+      {
+        "name": "host",
+        "dialog": "是否输入邀请链接以加入房间？"
+      },
+      {
+        "name": "client",
+        "dialog": "是否输入邀请链接以加入房间？"
+      }
+    ],
+    "samples": 21
+  },
+  {
+    "path": "evidence/android-touch-room.json",
+    "bytes": 18126,
+    "sha256": "b66114b6bd678a7e8ea0920a74f3f90d914374de15d17e449331a1e2d465dead",
+    "mode": "identity",
+    "host_over": true,
+    "client_over": true,
+    "events": [],
+    "samples": 19
+  },
+  {
+    "path": "evidence/android-resolved2-disconnect.json",
+    "bytes": 462,
+    "sha256": "dc1f7c4471532b9168dbbf2a89e7a0cd5c7e55e94455457b80d81c24219821c6"
+  },
+  {
+    "path": "evidence/android-resolved-build.log",
+    "bytes": 13772,
+    "sha256": "01ddcd6d884a8a92991835f527e5f6d3b5759083766a504f417edd2f41ded85c"
+  },
+  {
+    "path": "evidence/android-resolved-install.log",
+    "bytes": 36,
+    "sha256": "781a31c82430c97897af612ece5e0ca2205e301cb5ff121ce2660541ea5182c7"
+  },
+  {
+    "path": "evidence/android-resolved-sha256.txt",
+    "bytes": 128,
+    "sha256": "65f4738141ef231a27a691af3196a5ae06fd00782708740b777dc5bbabeeab55"
+  },
+  {
+    "path": "evidence/performance-summary.json",
+    "bytes": 14881,
+    "sha256": "77ba2388e8b06b941ad6bfa0678b6dcea9bc72fd39d5bb3c7f564e58be52c9e9"
+  },
+  {
+    "path": "evidence/perf-one-processes.jsonl",
+    "bytes": 97338,
+    "sha256": "31c78c7782a353da3cd9d9f68111ed5e80ab0b7f4d8401e0724b387c7ff99b50"
+  },
+  {
+    "path": "evidence/perf-three-processes.jsonl",
+    "bytes": 298056,
+    "sha256": "a35b07b9ff9eb663101cf9022ee6b51f2874de0ed65ee76045a9939ed5e9c7c5"
+  },
+  {
+    "path": "evidence/android-touch-touch.json",
+    "bytes": 5234,
+    "sha256": "ce15565a5fcb45ddb99f18ffdb73cb14d90bd2d302d26eef0ed1e844f327ea4c"
+  }
+]
