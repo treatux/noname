@@ -60,3 +60,14 @@
 ### Android 接入尚未通过
 
 `android-identity4.log` 在实际 APK WebView 中捕获 `Failed to resolve module specifier "vue"`；APK index 确实包含 importmap，仍需核查 WebView 支持、JIT worker 和资源加载。原生系统 ANR 反复遮挡 GPL/错误弹窗并阻塞 CDP。已安装与进入游戏不能替代 Android 接入对局成功，APK 和云端主持职责验收继续保持未完成。
+
+### 当前最新结论（取代上面的历史待验状态）
+
+- WebView113兼容测试变体把已知裸模块名解析为绝对资源URL，仅作用生成APK资源；89个模块改写，源码规则不变。`android-resolved-build.log` BUILD SUCCESSFUL、`android-resolved-install.log` Success；SHA256 `6d5b85bc36ce1ffc6776c6f36ef119d1b80acb7ff1466a90e8e5fe33b0fce437`。
+- `android-resolved2-disconnect.json`：Android掉线后云端hosting=true、=0、over=false；点击连接恢复原玩家ID6696715231、角色re_zhanghe。初始化测试清空旧房间配置，防止前一用例的自动重入竞态；实际重连不清空身份。
+- `android-touch-room.json`：云端与真实APK WebView双方自然over=true、events=[]，19个样本；证明Android作为玩家可完成八人身份局。
+- `android-touch-touch.json`：触摸选将改变角色为ol_xiaoqiao；存在卡牌触摸但未录到目标与成功提交，不能把动作计数当作出牌成功。新增长选择时限的第二次触摸用例继续验证。
+- 单房间/三个独立房间性能原始数据已完成，主持与玩家各用独立浏览器进程树。边界JSON、进程JSONL、AI/动画/事件/RTT指标JSON及 `performance-summary.json` 保存。报告 `assessment.md` 含样本量、分位数、资源归属、背景负载与容量范围，不从线性估计承诺最大并发。
+- 长期房主进程可用 `HOST_ONLY=1`；`persistent-identity-entry.json` 保存房间入口、PID与配置，玩家进入后开始托管，不是生产账号/崩溃恢复daemon。
+- `pnpm exec eslint apps/mobile/afterSync.ts apps/mobile/src/preload.ts` 本次exit0；新增脚本node --check与git diff --check通过。前次eslint超时不计通过。
+- 真实手机流畅性仍待小主实测，模拟器系统ANR和秒级应用RTT不能当作实机体验结论。当前目标4/5任务完成，performance-review保留待体验证据。

@@ -52,3 +52,16 @@ ANDROID_CDP=http://127.0.0.1:19222 TEST_MODE=identity \
 6. 至少完成一局八人身份局并确认客户端胜负结算。测试音频被省略时明确记录，不评价完整音效体验。
 
 **真实手机流畅性待小主实测；模拟器自动化不能替代真实设备结论。**
+
+## 当前验证产物与长期测试房主
+
+最近兼容测试APK SHA256：`6d5b85bc36ce1ffc6776c6f36ef119d1b80acb7ff1466a90e8e5fe33b0fce437`，约628MiB；重新构建可能改变摘要，应以 `evidence/android-resolved-sha256.txt` 为准。安装Success，Android玩家完整自然结算证据 `android-touch-room.json`；掉线恢复证据 `android-resolved2-disconnect.json`。
+
+```bash
+HOST_ONLY=1 TEST_MODE=identity RUN_NAME=persistent-identity \
+  node scripts/cloud-room.mjs > /root/noname-cloud/evidence/persistent-identity.log 2>&1
+```
+
+另开终端查看 `evidence/persistent-identity-entry.json`，取得房间ID。进入大厅后选该房间；脚本在检测到玩家接入后开始游戏，云端托管自身和AI，保持运行直至SIGINT/SIGTERM。对局结束页面保留，但不自动为下一局重建：重启此命令获得新房间。它是验证用长期宿主，不是带持久化/崩溃恢复的生产daemon。
+
+在此服务器环境中使用 `scripts/android-cdp.mjs` 直连 `/json/list` 返回的page websocket，避免WebView不支持Browser上下文协议导致Playwright连接失败。原生ANR/GPL模态框需要先实际接受/处理；这些阻塞应保存失败记录，不能隐去。
