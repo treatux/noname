@@ -40,10 +40,10 @@ try {
      const db = request.result;
      const tx = db.transaction('config', 'readwrite');
      const settings = {
-      mode, theme: 'quark_migration', layout: 'mobile', player_number: 8,
+      mode, theme: 'quark_migration', layout: 'nova', player_number: mode === 'doudizhu' ? 3 : 8,
       new_tutorial: true, show_splash: 'off', version: '1.11.7',
       characters: ['standard', 'shenhua', 'refresh'], cards: ['standard', 'extra'],
-      extensions: [], totouched: true, touchscreen: false, game_speed: 'fast',
+      extensions: [], totouched: true, touchscreen: false, identity_mode: 'normal', game_speed: 'vvfast',
       connect_read_clipboard: false, background_music: 'music_off', volumn_audio: 0, volumn_background: 0,
      };
      for (const [k, v] of Object.entries(settings)) tx.objectStore('config').put(v, k);
@@ -103,8 +103,23 @@ try {
     await page.waitForTimeout(1000);
    }
   }
+  let natural = null;
+  if (naturalSeconds) {
+   natural = await page.evaluate(async () => { const { game, _status } = await import('/noname.js'); return { over: !!_status.over, round: game.roundNumber, alive: game.players.length, dead: game.dead.length, useCard: [...game.players, ...game.dead].reduce((n, p) => n + p.getAllHistory('useCard').length, 0) }; });
+   if (natural.over) {
+    await page.screenshot({ path: `${evidence}/quark-${mode}-natural-result.png` });
+    const restart = page.getByText('重新开始', { exact: true }).first();
+    const restartVisible = await restart.isVisible({ timeout: 1000 }).catch(() => false);
+    if (restartVisible) {
+     await restart.click({ timeout: 2000 }).catch(() => {});
+     await page.waitForTimeout(1800);
+    }
+    const restarted = await page.evaluate(async () => { const { game, _status } = await import('/noname.js'); return { players: game.players.length, over: !!_status.over, arena: !!document.querySelector('#arena') }; });
+    natural.restart = { attempted: restartVisible, ...restarted };
+   }
+  }
   await page.screenshot({ path: `${evidence}/quark-${mode}-battle.png` });
-  const report = await page.evaluate(async () => {
+  const report = await page.evaluate(async (naturalState) => {
    const { lib, game, ui, _status } = await import('/noname.js');
    const all = [...game.players, ...game.dead];
    return {
@@ -113,8 +128,9 @@ try {
     useCardHistory: all.reduce((sum, p) => sum + p.getAllHistory('useCard').length, 0),
     over: !!_status.over,
     themeLoaded: [...document.styleSheets].some(s => s.href?.includes('/theme/quark_migration/')),
+    natural: naturalState,
    };
-  });
+  }, natural);
   // Freeze game and compare the SAME layout before/after theme removal.
   // This proves CSS fallback and seat geometry, not human card-input correctness.
   await page.evaluate(async () => { const { game } = await import('/noname.js'); game.pause(); });
