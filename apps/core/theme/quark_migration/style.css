@@ -256,3 +256,12 @@ html {background-image: url('./assets/background.jpg') !important; background-si
 .card.infohidden > .quark-card-art,
 .card.infohidden > .quark-card-type,
 .card.infohidden > .quark-card-distance {visibility:hidden;}
+/* Supplied decadeLayout.css:383-428, observed nova/decade-layout=off.
+   Positions are relative to the supplied arena; native seats/identity stay. */
+#arena.quark-player-presentation[data-number='8'] > .player[data-position='1'] {left:auto;top:21.4%;right:32px;}
+#arena.quark-player-presentation[data-number='8'] > .player[data-position='2'] {left:auto;top:44px;right:calc(22% - 64px);}
+#arena.quark-player-presentation[data-number='8'] > .player[data-position='3'] {left:auto;top:7px;right:calc(35.8% - 64px);}
+#arena.quark-player-presentation[data-number='8'] > .player[data-position='4'] {left:calc(50.2% - 64px);top:7px;right:auto;}
+#arena.quark-player-presentation[data-number='8'] > .player[data-position='5'] {left:calc(36.2% - 64px);top:7px;right:auto;}
+#arena.quark-player-presentation[data-number='8'] > .player[data-position='6'] {left:calc(22.2% - 64px);top:44px;right:auto;}
+#arena.quark-player-presentation[data-number='8'] > .player[data-position='7'] {left:32px;top:21.4%;right:auto;}

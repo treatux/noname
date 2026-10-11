@@ -1,0 +1,123 @@
+{
+  "scope": "Geometry subset only, random characters/cards and event stages differ; NOT full visual acceptance",
+  "referenceVersion": "1.12.7.0711_β",
+  "targetVersion": "1.11.7",
+  "players": [
+    {
+      "x": 0,
+      "y": 0,
+      "width": 0,
+      "height": 0
+    },
+    {
+      "x": 0,
+      "y": 0,
+      "width": 0,
+      "height": 0
+    },
+    {
+      "x": 0,
+      "y": 0,
+      "width": 0,
+      "height": 0
+    },
+    {
+      "x": 0,
+      "y": 0,
+      "width": 0,
+      "height": 0
+    },
+    {
+      "x": 0,
+      "y": 0,
+      "width": 0,
+      "height": 0
+    },
+    {
+      "x": 0,
+      "y": 0,
+      "width": 0,
+      "height": 0
+    },
+    {
+      "x": 0,
+      "y": 0,
+      "width": 0,
+      "height": 0
+    },
+    {
+      "x": 0,
+      "y": 0,
+      "width": 0,
+      "height": 0
+    }
+  ],
+  "hand": [
+    {
+      "x": 0,
+      "y": 0,
+      "width": 0,
+      "height": 0
+    },
+    {
+      "x": 0,
+      "y": 0,
+      "width": 0,
+      "height": 0
+    },
+    {
+      "x": 0,
+      "y": 0,
+      "width": 0,
+      "height": 0
+    },
+    {
+      "x": 0,
+      "y": 0,
+      "width": 0,
+      "height": 0
+    }
+  ],
+  "referenceScale": 0.9094736842105263,
+  "targetTransforms": [
+    {
+      "base": "translate(-5px,-7px) scale(0.9094736842105263)",
+      "paint": "translate(-5px, -7px) scale(0.909474)",
+      "scale": "1.15",
+      "selected": false
+    },
+    {
+      "base": "translate(93px,-7px) scale(0.9094736842105263)",
+      "paint": "translate(93px, -7px) scale(0.909474)",
+      "scale": "1.15",
+      "selected": false
+    },
+    {
+      "base": "translate(192px,-7px) scale(0.9094736842105263)",
+      "paint": "translate(192px, -7px) scale(0.909474)",
+      "scale": "1.15",
+      "selected": false
+    },
+    {
+      "base": "translate(290px,-7px) scale(0.9094736842105263)",
+      "paint": "translate(290px, -7px) scale(0.909474)",
+      "scale": "1.15",
+      "selected": false
+    }
+  ],
+  "manualUseCard": false,
+  "fallback": {
+    "theme": "simple",
+    "updateHook": "updatehl",
+    "href": "http://127.0.0.1:18091/theme/simple/style.css",
+    "ornaments": 0,
+    "campWrappers": 0,
+    "cardTitles": 0,
+    "cardDecorations": 0,
+    "epicCards": 0,
+    "originalParentsRestored": true
+  },
+  "errors": [],
+  "sameHandCount": true,
+  "geometrySubsetPassed": true
+}

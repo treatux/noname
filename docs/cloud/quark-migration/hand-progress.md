@@ -40,3 +40,11 @@
 - 原包牌名、花色/点数、卡牌类型/标签、装备和弃牌区域尚未完整还原。
 - 菜单、启动、提示、EpicFX/清瑶动态UI运行时、结算与重开，以及全扩展切换仍未完整迁移。
 - 不用资源加载/局部几何/鼠标出牌替代完整合同；任务继续未完成。
+
+## 身份八人座位修正（后续阶段）
+
+参考 `reference-identity8-cards` 在1280×720真实原包八人战场运行：座位1/7 top21.4%、侧边32px；2/6 top44px、22%/22.2%；3/5 top7px、35.8%/36.2%；4 top7px、50.2%。来源 `十周年UI/decadeLayout.css:383-428` 的 nova/decade-layout=off，而不是默认nova或on分支。
+
+原目标 `epic-card-identity8-built` 比较失败（座位2 x偏185.25px、座位6 x偏-209.72px等），失败测量落盘，不把八人页面可用当布局一致。仅适配原包座位CSS后 `identity8-original-seat`：8个人物主体和4张手牌 x/y/width/height 差值全部为0，errors=[]，simple回退检查通过；`identity8-geometry-subset.json` 为实测子集。此次SKIP_INPUT=1，没有新增人工出牌证明。
+
+随机武将、牌名和事件不同，参考只启用七项扩展，截图仍有计数、身份/龙框标记、原生范围文本与图形距离重叠、技能区等差异，**不是同阶段全屏还原通过**。正式容器内CSS SHA=`3a30f8877a96befc932147d9f29ca6c0130a761d07d7463d2da0a8ed75adb40f`与dist一致；无正式串流触摸/实体手机新增证据。
