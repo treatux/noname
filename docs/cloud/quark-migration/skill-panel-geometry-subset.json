@@ -1,0 +1,27 @@
+{
+  "scope": "One active/one passive skill geometry only, random different skills; NOT same-stage/full UI acceptance",
+  "tolerance": 0.05,
+  "comparisons": [
+    {
+      "id": "reyanyu",
+      "group": "enable",
+      "delta": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0
+      }
+    },
+    {
+      "id": "reqiaoshi",
+      "group": "trigger",
+      "delta": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0
+      }
+    }
+  ],
+  "passed": true
+}

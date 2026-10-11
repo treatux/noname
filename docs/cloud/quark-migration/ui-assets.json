@@ -92,6 +92,24 @@
       "sha256": "1611c4cef46e6fc8bc17915036966fdf88ab48bfe627cb2f151c186653eb2924"
     },
     {
+      "source": "extension/手杀ui/skill/images/btn0.png",
+      "target": "theme/quark_migration/assets/skill/btn0.png",
+      "bytes": 35890,
+      "sha256": "785e2cef9b29dc7e8a9acfd38d4c218b738d7ee930a3effd8cd068a442bbc8c8"
+    },
+    {
+      "source": "extension/手杀ui/skill/images/btn1.png",
+      "target": "theme/quark_migration/assets/skill/btn1.png",
+      "bytes": 62546,
+      "sha256": "64d8b248cd776137509e76d4017dafd9717b97d793658459ea491268e4628328"
+    },
+    {
+      "source": "extension/手杀ui/skill/images/btn2.png",
+      "target": "theme/quark_migration/assets/skill/btn2.png",
+      "bytes": 33532,
+      "sha256": "ba3dd9f0246f3eb48ae33f35a326cfef8a7dc779c4d265b736a20db35589f30d"
+    },
+    {
       "source": "extension/手杀ui/character/images/dialog2.png",
       "target": "theme/quark_migration/assets/character-dialog2.png",
       "bytes": 26622,

@@ -2,6 +2,7 @@
 import {lib, game, ui, _status, get} from '../../noname.js';
 import {computeQuarkHandLayout} from './quark-hand-layout.js';
 import {syncQuarkCard, restoreQuarkCards} from './quark-card-presentation.js';
+import {syncQuarkSkills} from './quark-skill-presentation.js';
 let installed = false;
 export function installQuarkPresentation() {
  if (installed) return;
@@ -77,11 +78,7 @@ export function installQuarkPresentation() {
    if (!title) {title=document.createElement('div');title.className='quark-top-name';title.setAttribute('aria-hidden','true');card.append(title);}
    syncQuarkCard(card, title);
   }
-  for (const skills of [ui.skills, ui.skills2, ui.skills3]) {
-   if (!skills) continue;
-   skills.classList.toggle('quark-skill-control', enabled);
-   skills.classList.toggle('skill-control', enabled);
-  }
+  syncQuarkSkills();
   for (const menu of document.querySelectorAll('.menu, .new-menu, .dialog.popped')) {
    menu.classList.toggle('quark-menu', enabled);
   }
@@ -140,6 +137,9 @@ export function installQuarkPresentation() {
   requestAnimationFrame(sync);
  };
  new MutationObserver(schedule).observe(document.documentElement, {childList: true, subtree: true});
+ // Native event/availability changes may not mutate DOM (e.g. selected skill).
+ // Poll only the small skill projection; unchanged signatures produce no writes.
+ window.setInterval(syncQuarkSkills,250);
  window.addEventListener('resize', schedule);
  lib.announce.subscribe('Noname.Apperaence.Theme.onChangeFinished', schedule);
  schedule();

@@ -13,6 +13,7 @@ const pairs = [
  ['theme/style/cardback/image/ol2.png','cardback-ol2.png'],
  ...['btn.png','confirm-bg-c.png','cbtn.png','QX.png','huanpai2.png','qipai.png'].map(x=>[`extension/手杀ui/lbtn/images/uibutton/${x}`,x]),
  ['extension/手杀ui/fonts/HYZLSJ.ttf','HYZLSJ.ttf'],
+ ...['btn0.png','btn1.png','btn2.png'].map(x=>[`extension/手杀ui/skill/images/${x}`,`skill/${x}`]),
  ['extension/手杀ui/character/images/dialog2.png','character-dialog2.png'],
  ['extension/十周年UI/assets/image/jbg.png','choose-jbg.png'],
  ...['wei','shu','wu','qun','shen','jin','key'].map(x=>[`extension/十周年UI/image/decorations/name2_${x}.png`,`name2_${x}.png`]),

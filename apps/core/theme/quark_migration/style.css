@@ -126,29 +126,35 @@ html {background-image: url('./assets/background.jpg') !important; background-si
 #arena.quark-player-presentation > .player > .avatar {
  left:20px !important;top:0 !important;width:calc(100% - 20px) !important;height:100% !important;z-index:2;
 }
-/* Skill controls: original 手杀ui/main1.css typography and 十周年金色
-   state treatment, applied to native ui.skills/ui.skills2/ui.skills3 controls. */
-#arena.quark-player-presentation .skill-control,
-#arena.quark-player-presentation .quark-skill-control {
- position:absolute;right:153px;bottom:20px;z-index:6;max-width:200px;zoom:1.1;
- pointer-events:none;background:transparent;box-shadow:none;padding:0;display:flex;
- flex-direction:row-reverse;flex-wrap:wrap-reverse;align-items:flex-end;
+/* Supplied 手杀ui skill/main1.css, scoped enable/trigger presentation.
+   Current native controls remain hidden input sources, restored on fallback. */
+.quark-native-skill-source {visibility:hidden !important;pointer-events:none !important;}
+#arena > .quark-skill-panel {
+ position:absolute;max-width:200px;bottom:20px;right:153px;z-index:6;zoom:1.1;
+ pointer-events:none;transform:none;background:none;box-shadow:none;
 }
-#arena.quark-player-presentation .skill-control > div,
-#arena.quark-player-presentation .quark-skill-control > div {
- position:relative;display:flex;align-items:center;justify-content:center;
- width:75px;height:40px;margin:0 2px;pointer-events:auto;
- color:#f0d775;font:400 24px/1 quark-HYZLSJ;
- background:linear-gradient(180deg,#f0d775 30%,#ab8c31 57%,#b0a04d 67%);
- -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
- text-shadow:0 0 3px rgba(2,3,2,.6);
+.quark-skill-panel div {position:relative;height:40px;width:75px;display:flex;justify-content:center;align-items:center;pointer-events:auto;}
+.quark-skill-panel > div {height:auto;display:flex;flex-wrap:wrap-reverse;flex-direction:row-reverse;justify-content:right;z-index:-1;}
+.quark-skill-panel > .enable {margin:0 2px -1px auto;font:400 24px quark-HYZLSJ;transform:scale(1,1.06);}
+.quark-skill-panel > .trigger {float:right;transform:scale(1,1.06);}
+.quark-skill-panel > .trigger > .skillitem {
+ margin:-8px 2px -8px 7px;font-family:quark-HYZLSJ;text-align:center;
+ background-image:linear-gradient(180deg,#f0d775 30%,#ab8c31 57%,#b0a04d 67%);
+ background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+ white-space:nowrap;font-size:21px;width:auto;font-weight:bold;pointer-events:none;
 }
-#arena.quark-player-presentation .skill-control > div:hover,
-#arena.quark-player-presentation .quark-skill-control > div:hover,
-#arena.quark-player-presentation .skill-control > div.active,
-#arena.quark-player-presentation .quark-skill-control > div.active {
- filter:brightness(1.25);transform:translateY(-2px);
+.quark-skill-panel > .enable > .skillitem {
+ background-image:linear-gradient(180deg,#f0d775 30%,#ab8c31 57%,#b0a04d 67%);
+ background-size:100% 100%;background-clip:text;-webkit-background-clip:text;
+ -webkit-text-fill-color:transparent;text-shadow:none;font-size:26px;zoom:.9;
+ bottom:5px;white-space:nowrap;margin:5px 12px;margin-top:3px;font-weight:400;
 }
+.quark-skill-panel > .enable > .skillitem::before {
+ z-index:-1;content:'';text-align:center;display:block;position:absolute;
+ margin:1px 12px;width:153%;height:175%;background:url('./assets/skill/btn0.png') center/100% 100%;
+}
+.quark-skill-panel > .enable > .skillitem.select::before {background-image:url('./assets/skill/btn1.png');filter:brightness(1.2);}
+.quark-skill-panel > .enable > .skillitem:not(.usable):not(.select)::before {background-image:url('./assets/skill/btn2.png');}
 #arena.quark-player-presentation .skill-control > div.disabled,
 #arena.quark-player-presentation .quark-skill-control > div.disabled {opacity:.45;}
 #arena.quark-player-presentation .skill-control > div:last-child,
