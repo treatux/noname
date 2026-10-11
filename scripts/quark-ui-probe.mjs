@@ -30,7 +30,9 @@ try {
  await page.waitForFunction(async()=>{const{game,lib}=await import('/noname.js');return game.players.length===3&&Object.keys(lib.character).length>10;},null,{timeout:90000});
  await page.waitForFunction(async()=>{const{ui,_status}=await import('/noname.js');return ui.arena?.getBoundingClientRect().width>0 && _status.imchoosing && _status.paused;},null,{timeout:90000});
  await page.waitForTimeout(1000);
- await page.screenshot({path:out+'/selection.png'});
+ const chooserVisible=await page.locator('.button.character.selectable').first().isVisible();
+ if(chooserVisible) await page.screenshot({path:out+'/selection.png'});
+ else report.selectionScreenshotValid=false;
  for(let i=0;i<100;i++){
   if(await page.locator('.handcards > .card').count())break;
   const button=page.locator('.button.character.selectable:not(.selected)').first();if(await button.isVisible())await button.click({timeout:1500}).catch(()=>{});
@@ -52,7 +54,8 @@ try {
   const history=await page.evaluate(async()=>{const{game}=await import('/noname.js');return game.me.getAllHistory('useCard').map(e=>({card:e.card?.name,targets:e.targets?.map(p=>p.name)}));});
   if(history.length>initial){report.manualUseCard=true;report.useCardHistory=history;break;}
   const cards=page.locator('.handcards > .card.selectable:not(.selected)');
-  if(await cards.count()) {await cards.first().click({timeout:2000}).catch(()=>{});report.inputs.push('card');}
+  if(await cards.count()) {await cards.first().click({timeout:2000}).catch(()=>{});report.inputs.push('card');
+   report.confirmAppearance=await page.evaluate(()=>[...document.querySelectorAll('.quark-confirm > div')].map(n=>({link:n.link,image:getComputedStyle(n).backgroundImage,font:getComputedStyle(n).fontFamily,rect:JSON.parse(JSON.stringify(n.getBoundingClientRect()))})));}
   const targets=page.locator('#arena > .player.selectable:not(.selected)');
   if(await targets.count()){await targets.first().click({timeout:2000}).catch(()=>{});report.inputs.push('target');}
   const confirm=page.locator('.control > div').filter({hasText:/^确定$/}).first();
@@ -62,6 +65,17 @@ try {
  }
  await page.screenshot({path:out+'/input-state.png'});
  assert.equal(report.runtime.theme,'quark_migration');assert.equal(report.runtime.version,'1.11.7');assert.equal(report.runtime.players,3);assert(report.runtime.handcards>0);assert(report.runtime.background.includes('/assets/background.jpg'));assert(report.runtime.font);assert.deepEqual(report.failedResources,[]);
+ // Inspect native confirm rendering without submitting a synthetic game event.
+ report.confirmPresentation=await page.evaluate(async()=>{
+  const{ui}=await import('/noname.js');
+  const prior=ui.confirm;const priorStr=prior?.str;
+  ui.create.confirm('oc');await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+  const nodes=[...ui.confirm.children].map(n=>({link:n.link,text:n.textContent,ok:n.classList.contains('quark-ok'),cancel:n.classList.contains('quark-cancel'),image:getComputedStyle(n).backgroundImage}));
+  if(priorStr)ui.create.confirm(priorStr);else ui.create.confirm();
+  return{scope:'Native Control appearance only; no synthetic submission',nodes};
+ });
+ assert(report.confirmPresentation.nodes.some(n=>n.link==='ok'&&n.ok&&n.image.includes('/btn.png')));
+ assert(report.confirmPresentation.nodes.some(n=>n.link==='cancel'&&n.cancel&&n.image.includes('/confirm-bg-c.png')));
  report.fallback=await page.evaluate(async()=>{const{lib,ui}=await import('/noname.js');await lib.configMenu.appearence.config.theme.onclick('simple');await new Promise(r=>requestAnimationFrame(r));return{theme:lib.config.theme,href:ui.css.theme.href,ornaments:document.querySelectorAll('.quark-rarity-long').length};});
  assert.equal(report.fallback.theme,'simple');assert.equal(report.fallback.ornaments,0);
  await page.screenshot({path:out+'/fallback.png'});

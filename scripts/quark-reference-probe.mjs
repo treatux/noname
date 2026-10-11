@@ -1,7 +1,7 @@
 // Isolated context on existing reference browser; never writes existing profile.
 import {chromium} from '/root/pi-web/node_modules/playwright/index.mjs';
 import fs from 'node:fs/promises';
-const out='/root/noname-cloud/evidence/quark-migration/full-reference';await fs.mkdir(out,{recursive:true});
+const out=process.env.EVIDENCE_DIR || '/root/noname-cloud/evidence/quark-migration/full-reference';await fs.mkdir(out,{recursive:true});
 const backup=JSON.parse(Buffer.from(await fs.readFile('/root/noname-cloud/reference/quark-handheld/runtime/无名杀 - 数据 - 2025.7.21 16.06.26','utf8'),'base64').toString()).config;
 const extensions=['十周年UI','手杀ui','皮肤切换','EpicFX','如真似幻','假装无敌','选将美化'];
 const config={};
@@ -10,17 +10,30 @@ for(const[k,v]of Object.entries(backup))if(cosmetics.has(k)||extensions.some(n=>
 Object.assign(config,{extensions,mode:'doudizhu',new_tutorial:true,show_splash:'off',version:'1.12.7.0711_β',connect_read_clipboard:false,background_music:'music_off',volumn_audio:0,volumn_background:0,characters:['standard','shenhua','refresh'],cards:['standard','extra']});
 for(const n of extensions)config[`extension_${n}_enable`]=true;
 config.extension_十周年UI_dynamicSkin=false;config.extension_皮肤切换_useDynamic=false;config.extension_皮肤切换_previewDynamic=false;config.skin={};config.qhly_skinset={};
-const report={scope:'All seven available UI extensions enabled in isolated context; skin payload excluded',requestedExtensions:extensions,errors:[],runtimePassed:false};
+const report={scope:'All seven available UI extensions enabled in isolated context; skin payload excluded',requestedExtensions:extensions,errors:[],failedRequests:[],httpErrors:[],runtimePassed:false};
 const browser=await chromium.launch({executablePath:'/root/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome',headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
 const context=await browser.newContext({viewport:{width:1280,height:720},hasTouch:true});const page=await context.newPage();page.setDefaultTimeout(15000);
-page.on('pageerror',e=>report.errors.push(String(e).slice(0,1000)));page.on('dialog',d=>d.dismiss());
+page.on('pageerror',e=>report.errors.push(String(e.stack||e).slice(0,2400)));page.on('dialog',d=>d.dismiss());
+page.on('requestfailed',r=>report.failedRequests.push({path:new URL(r.url()).pathname,error:r.failure()?.errorText}));
+page.on('response',r=>{if(r.status()>=400)report.httpErrors.push({path:decodeURIComponent(new URL(r.url()).pathname),status:r.status()});});
+await context.addInitScript(()=>{
+ window.quarkProbeErrors=[];
+ window.addEventListener('error',e=>window.quarkProbeErrors.push({message:e.message,file:e.filename,line:e.lineno,column:e.colno,stack:e.error?.stack}));
+ window.addEventListener('unhandledrejection',e=>window.quarkProbeErrors.push({message:String(e.reason),stack:e.reason?.stack}));
+});
 const root='/root/noname-cloud/reference/quark-handheld/runtime';
 await context.route('**/*',async r=>{
  const u=new URL(r.request().url());
+ if(u.hostname==='gitee.com' && u.pathname.startsWith('/UnknownMaxin/as-real-as-fantasy/raw/master/')){
+  const rel=u.pathname.slice('/UnknownMaxin/as-real-as-fantasy/raw/master/'.length);
+  if(!rel.split('/').includes('..'))try{return await r.fulfill({path:root+'/extension/如真似幻/'+rel});}catch{}
+ }
  if(u.origin!=='http://127.0.0.1:18112'){await r.abort();return;}
  const p=decodeURIComponent(u.pathname);
+ if(p==='/extension/EpicFX/asset/font/STXINGKA.ttf')return r.fulfill({path:root+'/extension/EpicFX/asset/font/STXINGKA.TTF'});
+ if(p==='/extension/如真似幻/fonts/shousha.TTF')return r.fulfill({path:root+'/extension/如真似幻/fonts/shousha.ttf'});
  if(p==='/preset.json')return r.fulfill({contentType:'application/json',body:JSON.stringify(config)});
- if(p==='/'||p==='/index.html')return r.fulfill({contentType:'text/html',path:'/root/noname-quark/deploy/index.html'});
+ if(p==='/'||p==='/index.html'||p==='/app.html')return r.fulfill({contentType:'text/html',path:'/root/noname-quark/deploy/index.html'});
  if(p==='/bridge.js')return r.fulfill({contentType:'text/javascript',path:'/root/noname-quark/deploy/bridge.js'});
  if(p==='/getFileList'||p==='/checkFile'){
   const rel=u.searchParams.get('dir')||u.searchParams.get('fileName')||'';
@@ -34,19 +47,49 @@ await context.route('**/*',async r=>{
  if(p==='/createDir'||p==='/writeFile')return r.fulfill({contentType:'application/json',body:JSON.stringify({success:true,data:null})});
  return r.continue();
 });
+const bounded=(promise,label,ms=20000)=>Promise.race([promise,new Promise((_,reject)=>setTimeout(()=>reject(new Error(label+' timed out')),ms))]);
 try{
+ console.log('stage: navigation');
  await page.goto('http://127.0.0.1:18112/',{waitUntil:'domcontentloaded',timeout:30000});
  await page.waitForTimeout(15000);
- await page.screenshot({path:out+'/home-or-start.png',timeout:15000});
+ console.log('stage: home capture');
+ await page.screenshot({path:out+'/home-or-start.png',timeout:15000,animations:'disabled'});
+ report.home=await page.evaluate(()=>{
+  const n=document.querySelector('#offlinebutton');const r=n?.getBoundingClientRect();const center=r?{x:r.x+r.width/2,y:r.y+r.height/2}:null;
+  return {path:location.pathname,loading:document.querySelector('#rzshLoading')?.textContent,loadingDisplay:document.querySelector('#rzshLoading')?getComputedStyle(document.querySelector('#rzshLoading')).display:null,offline:center,hit:center?document.elementFromPoint(center.x,center.y)?.id:null,canvases:document.querySelectorAll('canvas').length};
+ });
+ if(await page.locator('#updatelogmodal').isVisible()){
+  await page.mouse.click(30,100);
+  await page.waitForTimeout(700);
+ }
  const offline=page.locator('#offlinebutton');
  if(await offline.isVisible()){
-  await offline.click({timeout:10000});
-  await page.waitForTimeout(15000);
-  await page.screenshot({path:out+'/offline-or-battle.png',timeout:15000});
+  await page.touchscreen.tap(report.home.offline.x,report.home.offline.y);
+  console.log('stage: offline navigation initiated');
+  await page.waitForTimeout(Number(process.env.REFERENCE_BOOT_WAIT || 30000));
+  console.log('stage: post-navigation inspection');
+  const qa=page.locator('.cookie_qa input');
+  if(await qa.count()===2){
+   await qa.nth(0).fill('无名杀十周年');await qa.nth(1).fill('去fanbook频道');
+   await page.locator('button').filter({hasText:/^提交$/}).click({timeout:5000});
+   await page.waitForTimeout(1200);
+   report.onboarding={answeredFromShippedHint:true,remaining:await page.locator('.cookie_qa').count()};
+  }
+  await page.screenshot({path:out+'/selection.png',timeout:15000});
+  for(let attempt=0;attempt<50;attempt++){
+   if(await page.locator('.handcards > .card').count())break;
+   const choose=page.locator('.button.character.selectable:not(.selected)').first();
+   if(await choose.isVisible())await choose.tap({timeout:1500}).catch(()=>{});
+   const ok=page.locator('.control > .primary').first();
+   if(await ok.isVisible())await ok.tap({timeout:1500}).catch(()=>{});
+   await page.waitForTimeout(500);
+  }
  }
- report.runtime=await page.evaluate(()=>{
-  const rt=window.quarkRuntime;return{path:location.pathname,version:rt?.lib.version,players:rt?.game.players?.length||0,arena:!!document.querySelector('#arena'),savedEnable:JSON.parse(localStorage.getItem('noname_0.9_config')||'{}').extensions,activeEnable:rt?.lib.config.extensions?.filter(n=>rt.lib.config[`extension_${n}_enable`]),visibleButtons:[...document.querySelectorAll('button,.button,.control')].filter(n=>n.offsetWidth).map(n=>n.textContent?.trim().slice(0,50)).slice(0,25)};
- });
+ report.runtime=await bounded(page.evaluate(()=>{
+  const rt=window.quarkRuntime;return{loadingState:rt?{onload:typeof rt.lib.init.onload,extensions:rt.lib.extensions?.map(e=>({name:e[0],content:typeof e[1]})),loaded:rt.lib.loaded,imported:Object.keys(rt.lib.imported||{}),appPlugins:window.app?.plugins?.map(p=>p.name),scripts:[...document.scripts].map(n=>new URL(n.src||location.href).pathname),resources:performance.getEntriesByType('resource').map(e=>({path:decodeURIComponent(new URL(e.name).pathname),duration:e.duration})).slice(-30)}:null,path:location.pathname,version:rt?.lib.version,event:rt?.status.event?.name,paused:rt?.status.paused,ready:document.readyState,body:document.body.textContent?.trim().slice(0,300),diagnosticErrors:window.quarkProbeErrors,players:rt?.game.players?.length||0,handcards:document.querySelectorAll('.handcards > .card').length,arena:!!document.querySelector('#arena'),savedEnable:JSON.parse(localStorage.getItem('noname_0.9_config')||'{}').extensions,activeEnable:rt?.lib.config.extensions?.filter(n=>rt.lib.config[`extension_${n}_enable`]),visibleButtons:[...document.querySelectorAll('button,.button,.control')].filter(n=>n.offsetWidth).map(n=>n.textContent?.trim().slice(0,50)).slice(0,25)};
+ }), 'runtime inspection');
+ await fs.writeFile(out+'/runtime-before-screenshot.json',JSON.stringify(report,null,2));
+ await page.screenshot({path:out+'/offline-or-battle.png',timeout:15000,animations:'disabled'});
  report.runtimePassed=!!report.runtime.arena&&report.runtime.players>0;
 }catch(e){report.failure=String(e);}
-finally{await fs.writeFile(out+'/runtime.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report));await context.close();await browser.close();}
+finally{await fs.writeFile(out+'/runtime.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report));await bounded(context.close(),'context close',5000).catch(()=>{});await bounded(browser.close(),'browser close',5000).catch(()=>{});}

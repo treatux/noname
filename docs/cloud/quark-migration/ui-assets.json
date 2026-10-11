@@ -32,6 +32,48 @@
       "sha256": "ad94188af879406dfbc3026ea7bc710d3650afa5aeb7a4447c516aaa60e2c35e"
     },
     {
+      "source": "extension/手杀ui/lbtn/images/uibutton/btn.png",
+      "target": "theme/quark_migration/assets/btn.png",
+      "bytes": 922710,
+      "sha256": "bfd5e18e9e431cc4e8e00dc415a078bc67c43bf82700249c45b0ba490460ddd7"
+    },
+    {
+      "source": "extension/手杀ui/lbtn/images/uibutton/confirm-bg-c.png",
+      "target": "theme/quark_migration/assets/confirm-bg-c.png",
+      "bytes": 11314,
+      "sha256": "d823b2fbf2c8a48ffe42801e7f90ee6dfad7bfdec9a99e5f4152160e6a7f7569"
+    },
+    {
+      "source": "extension/手杀ui/lbtn/images/uibutton/cbtn.png",
+      "target": "theme/quark_migration/assets/cbtn.png",
+      "bytes": 7424,
+      "sha256": "4c6cffdfdbf9517900503568e7624154c3bbc70c3a3d84223d3b0618ee3c2b51"
+    },
+    {
+      "source": "extension/手杀ui/lbtn/images/uibutton/QX.png",
+      "target": "theme/quark_migration/assets/QX.png",
+      "bytes": 4388,
+      "sha256": "a1c07fa36592b392714e7bbdfb2d8f8876f4a5b42c22c15d456953c30508bf90"
+    },
+    {
+      "source": "extension/手杀ui/lbtn/images/uibutton/huanpai2.png",
+      "target": "theme/quark_migration/assets/huanpai2.png",
+      "bytes": 21415,
+      "sha256": "afca02395b785b5c6fb3e5b0919e9ef62b2e80b39f7449c8057feabef81ae79b"
+    },
+    {
+      "source": "extension/手杀ui/lbtn/images/uibutton/qipai.png",
+      "target": "theme/quark_migration/assets/qipai.png",
+      "bytes": 20980,
+      "sha256": "a4a7a31730931eba332e8ec40f6bf8d85936eb6c3b0315ab9cad67912d2d2e0c"
+    },
+    {
+      "source": "extension/手杀ui/fonts/HYZLSJ.ttf",
+      "target": "theme/quark_migration/assets/HYZLSJ.ttf",
+      "bytes": 7016892,
+      "sha256": "1611c4cef46e6fc8bc17915036966fdf88ab48bfe627cb2f151c186653eb2924"
+    },
+    {
       "source": "extension/十周年UI/assets/image/long_common.png",
       "target": "theme/quark_migration/assets/long_common.png",
       "bytes": 734743,
