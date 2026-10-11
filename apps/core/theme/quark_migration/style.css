@@ -183,3 +183,24 @@ html {background-image: url('./assets/background.jpg') !important; background-si
 #window .quark-menu .button.selected {background:linear-gradient(rgba(123,94,43,.95),rgba(67,48,25,.95));color:#fff4ad;}
 #window .quark-menu .caption,
 #window .quark-menu .title {color:#f5d982;font-family:quark-HYZLSJ;}
+/* Original 十周年UI/layout.css hand-wrap geometry, kept on the native
+   #me/#handcards1 nodes so the engine still owns card reflow and selection. */
+#arena.quark-player-presentation:not(.chess) #handcards1 {
+ height:120px;padding:0;top:calc(100% - 120px);
+}
+#arena.quark-player-presentation:not(.chess):not(.single-handcard) #handcards1 {
+ width:calc(100% - 240px);
+ left:calc(150% / 47 - 300% / 94 + 625% / 47 - 105px + 120px);
+}
+#arena.quark-player-presentation:not(.single-handcard):not(.chess) > #me,
+#arena.quark-player-presentation:not(.single-handcard):not(.chess) > #mebg,
+#arena.quark-player-presentation:not(.single-handcard):not(.chess) > #autonode {
+ left:0 !important;bottom:38px !important;width:calc(9700% / 94) !important;
+}
+#arena.quark-player-presentation:not(.single-handcard):not(.chess) > #mebg {visibility:hidden;}
+#arena.quark-player-presentation:not(.single-handcard):not(.chess) > #me #handcards1 {
+ left:150px !important;width:calc(100% - 150px) !important;
+}
+#arena.quark-player-presentation:not(.single-handcard):not(.chess) > #me #handcards1 > .handcards {left:0 !important;}
+#arena.quark-player-presentation:not(.chess) #handcards1.scrollh {top:calc(100% - 180px);height:180px;overflow-x:scroll;overflow-y:hidden;}
+#arena.quark-player-presentation:not(.chess) #handcards1.scrollh > div {height:120px;top:60px;}
