@@ -204,3 +204,35 @@ html {background-image: url('./assets/background.jpg') !important; background-si
 #arena.quark-player-presentation:not(.single-handcard):not(.chess) > #me #handcards1 > .handcards {left:0 !important;}
 #arena.quark-player-presentation:not(.chess) #handcards1.scrollh {top:calc(100% - 180px);height:180px;overflow-x:scroll;overflow-y:hidden;}
 #arena.quark-player-presentation:not(.chess) #handcards1.scrollh > div {height:120px;top:60px;}
+/* Native character chooser skin from 手杀ui/character/main1.css and
+   十周年UI/doudizhu.css. Selection/click handlers remain upstream. */
+#arena.quark-player-presentation.choose-character > .dialog,
+#arena.quark-player-presentation #chooseable.dialog,
+#arena.quark-player-presentation #identitychoose.dialog {
+ background:transparent;border:0;box-shadow:none;color:#f1e5c4;font-family:quark-shousha;
+}
+#arena.quark-player-presentation.choose-character > .dialog::before,
+#arena.quark-player-presentation .character-dialog::before {
+ content:'';position:absolute;inset:-40px -38px -17px;background:url('./assets/character-dialog2.png') center/100% 100% no-repeat;pointer-events:none;z-index:-1;
+}
+#arena.quark-player-presentation.choose-character > .dialog > .content-container,
+#arena.quark-player-presentation #chooseable.dialog > .content-container,
+#arena.quark-player-presentation #identitychoose.dialog > .content-container {background:transparent;}
+#arena.quark-player-presentation.choose-character .button.character,
+#arena.quark-player-presentation #chooseable .button.character,
+#arena.quark-player-presentation #identitychoose .button.character {
+ font-family:quark-shousha;color:#f3e6bd;text-shadow:1px 1px 2px #221710;
+ border:4px solid rgba(184,146,75,.6);border-radius:4px;background:rgba(34,26,23,.7);
+ box-shadow:0 0 0 1px rgba(25,17,12,.7),0 2px 8px rgba(0,0,0,.45);transition:filter .12s,transform .12s;
+}
+#arena.quark-player-presentation.choose-character .button.character:hover,
+#arena.quark-player-presentation #chooseable .button.character:hover,
+#arena.quark-player-presentation #identitychoose .button.character:hover {filter:brightness(1.2);transform:translateY(-2px);}
+#arena.quark-player-presentation.choose-character .button.character.selected,
+#arena.quark-player-presentation #chooseable .button.character.selected,
+#arena.quark-player-presentation #identitychoose .button.character.selected {
+ border-color:#f0d775;box-shadow:0 0 10px rgba(240,215,117,.85),inset 0 0 14px rgba(164,119,33,.35);
+}
+#arena.quark-player-presentation #chooseable .button.character {background-image:url('./assets/choose-jbg.png');background-size:100% 100%;background-color:transparent;border-width:8px 6px 14px 18px;}
+#arena.quark-player-presentation.choose-character #control,
+#arena.quark-player-presentation #identitychoose + #control {bottom:30px;}

@@ -92,6 +92,18 @@
       "sha256": "1611c4cef46e6fc8bc17915036966fdf88ab48bfe627cb2f151c186653eb2924"
     },
     {
+      "source": "extension/手杀ui/character/images/dialog2.png",
+      "target": "theme/quark_migration/assets/character-dialog2.png",
+      "bytes": 26622,
+      "sha256": "bc196b7a0e009c26f5e04e222a32dbaff0bd934388f9e1e36f3b4aa51e3902b9"
+    },
+    {
+      "source": "extension/十周年UI/assets/image/jbg.png",
+      "target": "theme/quark_migration/assets/choose-jbg.png",
+      "bytes": 2930,
+      "sha256": "fc59470f0fc259ce8227d5cb14158aef49ae3312c9b3b0ccdcbe881be680de58"
+    },
+    {
       "source": "extension/十周年UI/image/decorations/name2_wei.png",
       "target": "theme/quark_migration/assets/name2_wei.png",
       "bytes": 5364,
