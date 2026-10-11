@@ -7,6 +7,7 @@ import { security, initializeSandboxRealms } from "@/util/sandbox.js";
 import { CacheContext } from "@/library/cache/cacheContext.js";
 import { importCardPack, importCharacterPack, importExtension, importMode } from "./import.js";
 import { loadCard, loadCardPile, loadCharacter, loadExtension, loadMode, loadPlay } from "./loading.js";
+import { installQuarkPresentation } from "../ui/quark-presentation.js";
 
 // 无名杀，启动！
 export async function boot() {
@@ -911,6 +912,7 @@ async function loadCss() {
 		_skill: lib.init.promises.css(lib.assetURL + "layout/" + "others", "skill", void 0, true),
 	};
 	await Promise.allSettled(Object.keys(stylesLoading).map(async i => (ui.css[i] = await stylesLoading[i])));
+	installQuarkPresentation();
 }
 
 function setBackground() {

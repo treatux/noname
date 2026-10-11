@@ -1,0 +1,19 @@
+/* First real-resource batch. Layout, controls and full extension migration remain pending. */
+@import '../simple/style.css';
+@font-face {font-family: quark-shousha; src: url('./assets/shousha.ttf');}
+html {background-image: url('./assets/background.jpg') !important; background-size: cover; background-position: center;}
+.player .name, .player .name2, .player .identity, .card .name, .card .info,
+.control, .dialog, .menu {font-family: quark-shousha;}
+/* Original OL paper texture; preserve native fullskin illustrations and suit metadata. */
+.card:not(:empty):not(.infohidden):not(.fullimage):not(.fullborder) {
+ background-image: url('./assets/card-ol.png'); background-size: 100% 100%;
+ color: rgb(77,60,51); text-shadow: none;
+}
+.card.infohidden {background-image: url('./assets/cardback-ol.png'); background-size: 100% 100%;}
+.card.infohidden.flip {background-image: url('./assets/cardback-ol2.png');}
+/* Exact xinon ornament sizing from supplied 十周年UI/extension.js:228-237.
+   Mounted on native player; it never participates in targeting or game rules. */
+.player > .quark-rarity-long {
+ pointer-events: none; position: absolute; display: block;
+ top: -118px; left: -29px; height: 222%; width: 175%; z-index: 85;
+}

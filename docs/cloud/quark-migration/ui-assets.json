@@ -1,0 +1,65 @@
+{
+  "scope": "First batch: actual supplied UI assets only; no full restoration claim",
+  "entries": [
+    {
+      "source": "image/background/cdv_cdv_ol_bg.jpg",
+      "target": "theme/quark_migration/assets/background.jpg",
+      "bytes": 95213,
+      "sha256": "93ee17da3114f3c4a7572dcd49adb713cd7340ac7db757208ca389e4e0aadf7b"
+    },
+    {
+      "source": "font/shousha.ttf",
+      "target": "theme/quark_migration/assets/shousha.ttf",
+      "bytes": 12812640,
+      "sha256": "229c27e3e48f0760b585380901b42e408c904260fee3faa6f58ccaf0c415ff51"
+    },
+    {
+      "source": "theme/style/card/image/ol.png",
+      "target": "theme/quark_migration/assets/card-ol.png",
+      "bytes": 20816,
+      "sha256": "554f8e1aa1134d6e8f0409512cf1af8c5a43d3573d92f296de146d68f0d90eee"
+    },
+    {
+      "source": "theme/style/cardback/image/ol.png",
+      "target": "theme/quark_migration/assets/cardback-ol.png",
+      "bytes": 35238,
+      "sha256": "ad94188af879406dfbc3026ea7bc710d3650afa5aeb7a4447c516aaa60e2c35e"
+    },
+    {
+      "source": "theme/style/cardback/image/ol2.png",
+      "target": "theme/quark_migration/assets/cardback-ol2.png",
+      "bytes": 35238,
+      "sha256": "ad94188af879406dfbc3026ea7bc710d3650afa5aeb7a4447c516aaa60e2c35e"
+    },
+    {
+      "source": "extension/十周年UI/assets/image/long_common.png",
+      "target": "theme/quark_migration/assets/long_common.png",
+      "bytes": 734743,
+      "sha256": "a6e6f49731cef0beceeb73d03f22c47159f97cb1da2dba07bc30a1e7e33ab358"
+    },
+    {
+      "source": "extension/十周年UI/assets/image/long_rare.png",
+      "target": "theme/quark_migration/assets/long_rare.png",
+      "bytes": 1089828,
+      "sha256": "504cc526ebc1bae9399afd1df051819508d1ed68c0f1f176005ca575f2819d43"
+    },
+    {
+      "source": "extension/十周年UI/assets/image/long_epic.png",
+      "target": "theme/quark_migration/assets/long_epic.png",
+      "bytes": 1241579,
+      "sha256": "ded8344f8b4ac5daf1046a427bcd442a9e0af2d19e9e9fe1de73f64195237084"
+    },
+    {
+      "source": "extension/十周年UI/assets/image/long_legend.png",
+      "target": "theme/quark_migration/assets/long_legend.png",
+      "bytes": 1363241,
+      "sha256": "56a7f4194fabc171a4cbbaec88ebf5af3902554795c2d44678ad1a751fa85214"
+    },
+    {
+      "source": "extension/十周年UI/assets/image/long_junk.png",
+      "target": "theme/quark_migration/assets/long_junk.png",
+      "bytes": 2123,
+      "sha256": "d0353d6ae2f4b8aaa39f7735423b6000d2f1cd83fcdc396c9eed981babfae924"
+    }
+  ]
+}

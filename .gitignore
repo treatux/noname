@@ -24,3 +24,6 @@ Thumbs.db
 # Local tool state and Kotlin incremental caches
 .local/
 apps/mobile/android/.kotlin/
+
+# Local reference UI assets: tracked SHA-256 manifest and copy script only
+apps/core/theme/quark_migration/assets/
