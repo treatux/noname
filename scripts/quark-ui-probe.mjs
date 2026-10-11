@@ -44,7 +44,8 @@ try {
   if (process.env.SKILL_ACTIVE && !report.chosenActiveCharacter) {
    const candidate=await page.evaluate(async()=>{
     const {lib}=await import('/noname.js');
-    return [...document.querySelectorAll('.button.character.selectable:not(.selected)')].map((n,index)=>({name:n.link,index,skills:lib.character[n.link]?.skills || lib.character[n.link]?.[3] || []})).find(c=>c.skills.some(k=>{const en=lib.skill[k]?.enable;return en==='phaseUse'||Array.isArray(en)&&en.includes('phaseUse');}));
+    const candidates=[...document.querySelectorAll('.button.character.selectable:not(.selected)')].map((n,index)=>({name:n.link,index,skills:lib.character[n.link]?.skills || lib.character[n.link]?.[3] || []}));
+    return candidates.find(c=>c.skills.includes('zhiheng')) || candidates.find(c=>c.skills.includes('rende')) || candidates.find(c=>c.skills.some(k=>{const en=lib.skill[k]?.enable;return en==='phaseUse'||Array.isArray(en)&&en.includes('phaseUse');}));
    });
    if(candidate){report.chosenActiveCharacter=candidate;button=page.locator('.button.character.selectable:not(.selected)').nth(candidate.index);}
   }
@@ -81,21 +82,61 @@ try {
  })();
  console.log('stage: skill');
  if (process.env.SKILL_PROBE) {
-  report.skillProbe = {seen:false, clicked:false, historyBefore:0, historyAfter:0};
-  report.skillProbe.historyBefore = await page.evaluate(async()=>{const{game}=await import('/noname.js');return game.me.getAllHistory('useSkill').length;});
-  report.skillProbe.player=await page.evaluate(async()=>{const{game,_status}=await import('/noname.js');return {name:game.me.name,skills:game.me.getSkills(),event:_status.event.name,paused2:!!_status.paused2,auto:!!_status.auto};});
-  const deadline = Date.now() + Number(process.env.SKILL_WAIT_MS || 12000);
+  report.skillProbe = {scope:'Native skill control and legal selections only; no injected skill/event/AI',seen:false,clicked:false,completed:false,inputs:[],samples:[]};
+  const skillState=()=>page.evaluate(async()=>{
+   const{game,_status,ui}=await import('/noname.js');const e=_status.event;
+   const ancestors=[];let ownPhaseUse=false;for(let p=e,depth=0;p&&depth<20;p=p.parent,depth++){ancestors.push({name:p.name,player:p.player?.name,isMine:p.player===game.me});if(p.name==='phaseUse'&&p.player===game.me)ownPhaseUse=true;}
+   return {ancestors,name:game.me.name,skills:game.me.getSkills(),event:e.name,eventSkill:e.skill,ownPhaseUse,auto:!!_status.auto,paused2:!!_status.paused2,
+    useSkill:game.me.getAllHistory('useSkill').map(h=>({skill:h.skill,targets:h.targets?.map(p=>p.name)})),
+    useCard:game.me.getAllHistory('useCard').map(h=>({skill:h.skill,card:h.card?.name,targets:h.targets?.map(p=>p.name)})),
+    available:[ui.skills,ui.skills2,ui.skills3].filter(Boolean).flatMap(n=>[...n.children].filter(b=>b.checkVisibility({visibilityProperty:true})&&!b.closest('.hidden')).map(b=>b.link))};
+  });
+  report.skillProbe.before=await skillState();
+  const deadline = Date.now() + Number(process.env.SKILL_WAIT_MS || 45000);
   while (Date.now() < deadline) {
-   const skill = page.locator('.quark-skill-control > div:visible').first();
-   if (await skill.count() && await skill.isVisible({timeout:500}).catch(()=>false)) {
-    report.skillProbe.seen=true; await skill.click({timeout:3000}).catch(()=>{}); report.skillProbe.clicked=true; break;
+   const state=await skillState();report.skillProbe.samples.push(state);
+   await fs.writeFile(out+'/skill-progress.json',JSON.stringify(report.skillProbe,null,2));
+   if(report.skillProbe.clicked && (state.useSkill.slice(report.skillProbe.before.useSkill.length).some(h=>h.skill===report.skillProbe.clickedSkill) || state.useCard.slice(report.skillProbe.before.useCard.length).some(h=>h.skill===report.skillProbe.clickedSkill))){
+    report.skillProbe.completed=true;report.skillProbe.after=state;break;
+   }
+   if(!report.skillProbe.clicked && state.ownPhaseUse && !state.auto && state.available.length){
+    const buttons=page.locator('.quark-skill-control > div:visible');
+    if(await buttons.count()){
+     report.skillProbe.seen=true;
+     const link=await buttons.first().evaluate(n=>n.link);
+     try {await buttons.first().click({timeout:2500});report.skillProbe.clicked=true;report.skillProbe.clickedSkill=link;report.skillProbe.inputs.push({kind:'skill',link});}catch{}
+    }
+   }else if(report.skillProbe.clicked){
+    const cards=page.locator('.handcards > .card.selectable:not(.selected)');
+    if(await cards.count()){try{await cards.first().click({timeout:1500});report.skillProbe.inputs.push({kind:'card'});}catch{}}
+    const targets=page.locator('#arena > .player.selectable:not(.selected)');
+    if(await targets.count()){try{await targets.first().click({timeout:1500});report.skillProbe.inputs.push({kind:'target'});}catch{}}
+    const options=page.locator('.dialog .button.selectable:not(.selected):visible');
+    if(await options.count()){try{await options.first().click({timeout:1500});report.skillProbe.inputs.push({kind:'button'});}catch{}}
+    const confirm=page.locator('.control > div').filter({hasText:/^确定$/}).first();
+    if(await confirm.isVisible().catch(()=>false)){try{await confirm.click({timeout:1500});report.skillProbe.inputs.push({kind:'confirm'});}catch{}}
+   }else if(!state.ownPhaseUse && !report.skillProbe.clicked && ['chooseToRespond','chooseToUse','chooseToDiscard','chooseBool','chooseControl'].includes(state.event)){
+    // Advance blocking native response/discard prompts with actual UI input;
+    // never auto-play or manufacture a skill/event.
+    const cancel=page.locator('.control > div').filter({hasText:/^取消$/}).first();
+    if(await cancel.isVisible().catch(()=>false)){try{await cancel.click({timeout:1500});report.skillProbe.inputs.push({kind:'response-cancel',event:state.event});}catch{}}
+    else {
+     const no=page.locator('.control > div').filter({hasText:/^(取消|不发动|否)$/}).first();
+     if(await no.isVisible().catch(()=>false)){try{await no.click({timeout:1500});report.skillProbe.inputs.push({kind:'optional-decline',event:state.event});}catch{}}
+     const card=page.locator('.handcards > .card.selectable:not(.selected)').first();
+     if(await card.isVisible().catch(()=>false))await card.click({timeout:1500}).catch(()=>{});
+     const ok=page.locator('.control > div').filter({hasText:/^确定$/}).first();
+     if(await ok.isVisible().catch(()=>false))await ok.click({timeout:1500}).catch(()=>{});
+    }
    }
    await page.waitForTimeout(500);
   }
-  await page.waitForTimeout(1200);
-  report.skillProbe.historyAfter = await page.evaluate(async()=>{const{game}=await import('/noname.js');return game.me.getAllHistory('useSkill').length;});
-  report.skillProbe.controls = await page.evaluate(()=>[...document.querySelectorAll('.skill-control,.quark-skill-control')].map(n=>({class:n.className,children:n.children.length,html:n.innerText})));
+  report.skillProbe.after ??= await skillState();
   await page.screenshot({path:out+'/skill-state.png'});
+  if(report.skillProbe.clicked && !report.skillProbe.completed){
+   const cancel=page.locator('.control > div').filter({hasText:/^取消$/}).first();
+   if(await cancel.isVisible().catch(()=>false)){try{await cancel.click({timeout:1500});report.skillProbe.inputs.push({kind:'incomplete-skill-cancel'});}catch{}}
+  }
  }
  await fs.writeFile(out+'/interaction-state.json',JSON.stringify(report,null,2));
  console.log('stage: card input');
