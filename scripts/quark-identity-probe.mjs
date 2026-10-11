@@ -61,15 +61,24 @@ try {
    const { ui, _status } = await import('/noname.js');
    return ui.auto && ui.arena?.getBoundingClientRect().width > 0 && _status.imchoosing && _status.paused;
   }, null, { timeout: 90000 });
+  await page.waitForFunction(() => document.querySelector('.button.character.selectable, #chooseable, #identitychoose'), null, { timeout: 30000 }).catch(() => {});
+  await page.waitForTimeout(1200);
+  const selectionState = await page.evaluate(() => ({
+   buttons: document.querySelectorAll('.button.character').length,
+   selectable: document.querySelectorAll('.button.character.selectable').length,
+   dialogs: [...document.querySelectorAll('.dialog')].map(n => ({ id:n.id, class:n.className, rect:JSON.parse(JSON.stringify(n.getBoundingClientRect())), display:getComputedStyle(n).display })),
+   body: document.body.innerText.slice(0,400),
+  }));
+  await fs.writeFile(`${evidence}/quark-${mode}-selection-state.json`, JSON.stringify(selectionState, null, 2));
   await page.screenshot({ path: `${evidence}/quark-${mode}-selection.png` });
   // Toggle only after the native chooser exists, not during engine startup.
   // Native trusted clicks also handle choosers that cannot switch to auto.
   for (let attempt = 0; attempt < 60; attempt++) {
    if (await page.locator('.handcards > .card').count()) break;
    const character = page.locator('.button.character.selectable:not(.selected)').first();
-   if (await character.isVisible()) await character.click();
+   if (await character.isVisible({ timeout: 500 }).catch(() => false)) await character.click({ timeout: 1500 }).catch(() => {});
    const confirm = page.locator('.control > div').filter({ hasText: /^确定$/ }).first();
-   if (await confirm.isVisible()) await confirm.click();
+   if (await confirm.isVisible({ timeout: 500 }).catch(() => false)) await confirm.click({ timeout: 1500 }).catch(() => {});
    await page.waitForTimeout(500);
   }
   await page.waitForFunction(() => document.querySelector('.handcards > .card'), null, { timeout: 30000 });

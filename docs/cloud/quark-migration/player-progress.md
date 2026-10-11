@@ -21,7 +21,7 @@
 
 已验证提交：e6c2f8c为原包控件适配（17素材HTTP一致），人物/牌面改动尚在工作区待画面核验后提交。
 
-后续阶段证据：post-build-three 在全量核心构建后通过三人斗地主，资源无失败、原生 `shan` 出牌历史存在、菜单节点带 quark-menu、simple 回退父节点恢复；identity8-quark-final 通过八人身份局，三种尺寸截图和选将/战场/控件证据齐全。主题关闭后本方座位从夸克右下布局回到 GitHub 原生位置，记录为预期回退差异，不能要求几何不变。
+后续阶段证据：post-build-three 在全量核心构建后通过三人斗地主，资源无失败、原生 `shan` 出牌历史存在、菜单节点带 quark-menu、simple 回退父节点恢复；identity8-quark-final 通过八人身份局，三种尺寸截图和选将/战场/控件证据齐全。主题关闭后本方座位从夸克右下布局回到 GitHub 原生位置，记录为预期回退差异，不能要求几何不变。`a5aeb88` 又接入原包 `layout.css` 的本方手牌容器左移150px/120px高度/折叠滚动规则；独立矩形探针在公共启动阶段无输出而停止，因此手牌精确矩形仍待单独证据。正式 noname-stream 是 `/root/noname-cloud/source/dist` 的只读 bind mount，最新主题 CSS hash 已与容器一致。
 
 部署边界：`evidence/quark-migration/deploy-stream-boundary.json` 记录源码/dist/正式 noname-stream 容器四项 hash 一致且 bundle 含安装调用；公网 cloud-phone 和容器 HTTP 入口当前均返回 Selkies Basic Auth 401，正式外网串流、实体手机音视频触摸、温升电池暂不能取证，未输出凭据。
 
