@@ -26,6 +26,14 @@ export function installQuarkPresentation() {
    if(title.textContent!==text)title.textContent=text;
    title.classList.toggle('base',get.type(card)==='basic');
   }
+  for (const skills of [ui.skills, ui.skills2, ui.skills3]) {
+   if (!skills) continue;
+   skills.classList.toggle('quark-skill-control', enabled);
+   skills.classList.toggle('skill-control', enabled);
+  }
+  for (const menu of document.querySelectorAll('.menu, .new-menu, .dialog.popped')) {
+   menu.classList.toggle('quark-menu', enabled);
+  }
   for (const control of document.querySelectorAll('.control')) {
    const confirm = enabled && control === ui.confirm;
    control.classList.toggle('quark-confirm', confirm);
