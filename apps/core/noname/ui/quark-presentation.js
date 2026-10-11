@@ -1,6 +1,7 @@
 // UI-only decoration; native Player, events, rules and AI stay authoritative.
 import {lib, game, ui, _status, get} from '../../noname.js';
 import {computeQuarkHandLayout} from './quark-hand-layout.js';
+import {syncQuarkCard, restoreQuarkCards} from './quark-card-presentation.js';
 let installed = false;
 export function installQuarkPresentation() {
  if (installed) return;
@@ -69,13 +70,12 @@ export function installQuarkPresentation() {
    handLayoutActive = false;
    nativeUpdateHand.call(ui);
   }
+  if (!enabled) restoreQuarkCards();
   for (const card of document.querySelectorAll('.card')) {
    let title = card.querySelector(':scope > .quark-top-name');
    if (!enabled || !card.name) {title?.remove();continue;}
    if (!title) {title=document.createElement('div');title.className='quark-top-name';title.setAttribute('aria-hidden','true');card.append(title);}
-   const text=get.translation(card.name);
-   if(title.textContent!==text)title.textContent=text;
-   title.classList.toggle('base',get.type(card)==='basic');
+   syncQuarkCard(card, title);
   }
   for (const skills of [ui.skills, ui.skills2, ui.skills3]) {
    if (!skills) continue;

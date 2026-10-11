@@ -92,7 +92,7 @@ html {background-image: url('./assets/background.jpg') !important; background-si
  background:url('./assets/epic-cardstyle_bg.png') center/100% 100% no-repeat;
 }
 .card > .quark-top-name.base {
- top:-3px;width:100px;left:50%;transform:translateX(-50%);
+ top:-3px;width:100px;height:auto;left:50%;transform:translateX(-50%);
  background:none;
 }
 .card.infohidden > .quark-top-name {visibility:hidden;}
@@ -217,3 +217,42 @@ html {background-image: url('./assets/background.jpg') !important; background-si
  top:0;height:100%;overflow-x:scroll;overflow-y:hidden;
 }
 #arena.quark-player-presentation:not(.chess) #handcards1.scrollh > .handcards {top:auto !important;}
+/* Supplied EpicFX cardFace/1000/face.css. Native info/name/image nodes remain
+   intact for theme fallback; new display layers are non-interactive. */
+.card.quark-epic-card {box-shadow:none !important;}
+.card.quark-epic-card > .info {visibility:hidden;}
+.card.quark-epic-card > .quark-suit-num {
+ position:absolute;font-size:15px;color:black;text-align:center;top:7px;left:0;
+ width:25px;height:auto;line-height:18px;text-shadow:0 0 3px #fff,0 0 8px #fff;
+ letter-spacing:-1px;transform-origin:0 0;z-index:1;pointer-events:none;
+}
+.card.quark-epic-card > .quark-suit-num.red {color:red;}
+.card.quark-epic-card > .quark-top-name:not(.base) > img {height:23px;pointer-events:none;}
+.card.quark-epic-card > .quark-top-name.base > img {
+ width:67%;position:relative;left:6px;top:7px;pointer-events:none;
+}
+.card.quark-epic-card > .quark-card-type {
+ position:absolute;width:29%;height:10%;top:42px;left:50%;transform:translateX(-50%);pointer-events:none;
+}
+.card.quark-epic-card > .quark-card-type.trick {top:40px;}
+.card.quark-epic-card > .quark-card-type > img {width:100%;height:100%;}
+.card.quark-epic-art > .image {visibility:hidden;}
+.card.quark-epic-card > .quark-card-art {
+ position:absolute;width:100px;height:100px;top:auto;bottom:8%;left:50%;
+ transform:translateX(-50%);pointer-events:none;
+}
+.card.quark-epic-card > .quark-card-art > img {
+ position:absolute;left:50%;transform:translateX(-50%);width:96%;top:16px;pointer-events:none;
+}
+.card.quark-epic-card > .quark-card-art > img.equip {top:7px;}
+.card.quark-epic-card > .quark-card-distance {
+ position:absolute;width:100%;height:55px;top:84px;left:0;pointer-events:none;
+}
+.card.quark-epic-card > .quark-card-distance > .fanwei {position:absolute;left:50%;transform:translateX(-50%);height:37%;bottom:0;}
+.card.quark-epic-card > .quark-card-distance > .juli {height:57%;position:absolute;display:block;bottom:0;left:90%;transform:translateX(-90%);}
+.card.quark-epic-card > .quark-card-distance > .aas {top:17px;position:absolute;left:54%;}
+.card.quark-epic-card > .quark-card-distance > .num {height:55%;position:absolute;display:block;bottom:6px;left:65%;}
+.card.infohidden > .quark-suit-num,
+.card.infohidden > .quark-card-art,
+.card.infohidden > .quark-card-type,
+.card.infohidden > .quark-card-distance {visibility:hidden;}
