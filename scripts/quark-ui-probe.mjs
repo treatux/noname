@@ -49,6 +49,17 @@ try {
   return{version:lib.version,theme:lib.config.theme,mode:lib.config.mode,players:game.players.length,handcards:document.querySelectorAll('.handcards > .card').length,href:ui.css.theme.href,playerMounts:[...document.querySelectorAll('#arena > .player')].map(p=>({nameInCamp:p.node.name.parentNode.className,hpInWrap:p.node.hp.parentNode.className,originalHpSame:p.node.hp===p.querySelector('.hp'),group:p.group,rect:JSON.parse(JSON.stringify(p.getBoundingClientRect())),nameVisible:getComputedStyle(p.node.name).visibility,paint:[...p.children].map(n=>({class:n.className,rect:JSON.parse(JSON.stringify(n.getBoundingClientRect())),bg:getComputedStyle(n).backgroundColor,image:getComputedStyle(n).backgroundImage,z:getComputedStyle(n).zIndex,display:getComputedStyle(n).display}))})),cardTitles:document.querySelectorAll('.quark-top-name').length,cardFace:document.querySelector('.handcards > .card')?getComputedStyle(document.querySelector('.handcards > .card')).backgroundImage:null,skillControls:[...document.querySelectorAll('.skill-control, .quark-skill-control')].map(n=>({class:n.className,children:n.children.length,rect:JSON.parse(JSON.stringify(n.getBoundingClientRect())),font:getComputedStyle(n).fontFamily})),menus:[...document.querySelectorAll('.menu, .new-menu, .dialog.popped')].map(n=>({class:n.className,quark:n.classList.contains('quark-menu')})),background:getComputedStyle(document.documentElement).backgroundImage,font:document.fonts.check('16px quark-shousha'),ornaments:[...document.querySelectorAll('.quark-rarity-long')].map(n=>({src:n.getAttribute('src'),loaded:n.complete&&n.naturalWidth>0,pointerEvents:getComputedStyle(n).pointerEvents}))};
  });
  await page.screenshot({path:out+'/battle.png'});
+ report.menuProbe = await (async()=>{
+  const before = await page.locator('.menu:visible, .new-menu:visible, .dialog.popped:visible').count();
+  const option = page.locator('.menubutton, .control > div').filter({hasText:/^选项$/}).first();
+  const clicked = await option.isVisible().catch(()=>false);
+  if (clicked) await option.click({timeout:3000}).catch(()=>{});
+  await page.waitForTimeout(500);
+  const visible = await page.locator('.menu:visible, .new-menu:visible, .dialog.popped:visible').count();
+  const nodes = await page.evaluate(()=>[...document.querySelectorAll('.menu:visible,.new-menu:visible,.dialog.popped:visible')].map(n=>({class:n.className,quark:n.classList.contains('quark-menu'),text:n.innerText.slice(0,180)})));
+  await page.screenshot({path:out+'/menu-click.png'});
+  return {before,clicked,visible,opened:clicked&&visible>0,nodes};
+ })();
  if (process.env.SKILL_PROBE) {
   report.skillProbe = {seen:false, clicked:false, historyBefore:0, historyAfter:0};
   report.skillProbe.historyBefore = await page.evaluate(async()=>{const{game}=await import('/noname.js');return game.me.getAllHistory('useSkill').length;});

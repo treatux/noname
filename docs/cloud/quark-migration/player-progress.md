@@ -21,4 +21,10 @@
 
 已验证提交：e6c2f8c为原包控件适配（17素材HTTP一致），人物/牌面改动尚在工作区待画面核验后提交。
 
-下一步：复核player-paint-check头像/name/hp、保证原布局回退；读取reference-no-video自然结算与截图；补齐本方手牌排列/空间，原技能DOM与合法主动技能控制，完整扩展冲突和切换，再做八人及正式串流输入。未完成时继续目标，不需用户提醒。
+后续阶段证据：post-build-three 在全量核心构建后通过三人斗地主，资源无失败、原生 `shan` 出牌历史存在、菜单节点带 quark-menu、simple 回退父节点恢复；identity8-quark-final 通过八人身份局，三种尺寸截图和选将/战场/控件证据齐全。主题关闭后本方座位从夸克右下布局回到 GitHub 原生位置，记录为预期回退差异，不能要求几何不变。
+
+部署边界：`evidence/quark-migration/deploy-stream-boundary.json` 记录源码/dist/正式 noname-stream 容器四项 hash 一致且 bundle 含安装调用；公网 cloud-phone 和容器 HTTP 入口当前均返回 Selkies Basic Auth 401，正式外网串流、实体手机音视频触摸、温升电池暂不能取证，未输出凭据。
+
+技能缺口：适配已接入原生 ui.skills/ui.skills2/ui.skills3 的展示类和真实原包字体渐变，但随机斗地主局未稳定产生可见主动技能控件；SKILL_PROBE 只等待原生节点并读取 useSkill，曾在公共启动阶段无输出超过两分钟，已停止并限制为12秒，不能把技能适配代码当作 useSkill 验收。
+
+下一步：真实点击原生选项菜单并记录弹出节点；补齐本方手牌排列/空间、原生主动技能事件、完整扩展冲突和切换，再做自然结算/重新开始、正式串流输入及实体手机证据。未完成时继续目标，不需用户提醒。
