@@ -2,6 +2,8 @@ import {chromium} from '/root/pi-web/node_modules/playwright/index.mjs';
 import fs from 'node:fs/promises';
 import assert from 'node:assert/strict';
 const out=process.env.EVIDENCE_DIR || '/root/noname-cloud/evidence/quark-migration/direct';
+const probeMode=process.env.PROBE_MODE || 'doudizhu';
+const probePlayers=Number(process.env.PROBE_PLAYERS || (probeMode==='identity' ? 8 : 3));
 await fs.mkdir(out,{recursive:true});
 const browser=await chromium.launch({executablePath:'/root/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome',headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
 const context=await browser.newContext({viewport:{width:1280,height:720}});
@@ -20,15 +22,15 @@ try {
    const req=indexedDB.open('noname_0.9_data',4);
    req.onupgradeneeded=()=>{for(const n of ['config','data','image','audio'])if(!req.result.objectStoreNames.contains(n))req.result.createObjectStore(n);if(!req.result.objectStoreNames.contains('video'))req.result.createObjectStore('video',{keyPath:'time'});};
    req.onerror=reject;req.onsuccess=()=>{const db=req.result;const tx=db.transaction('config','readwrite');
-    const settings={mode:'doudizhu',theme:'quark_migration',layout:'nova',player_number:3,new_tutorial:true,show_splash:'off',version:'1.11.7',characters:['standard','shenhua','refresh'],cards:['standard','extra'],extensions:[],totouched:true,touchscreen:false,game_speed:'fast',connect_read_clipboard:false,background_music:'music_off',volumn_audio:0,volumn_background:0};
+    const settings={mode:probeMode,theme:'quark_migration',layout:'nova',player_number:probePlayers,new_tutorial:true,show_splash:'off',version:'1.11.7',characters:['standard','shenhua','refresh'],cards:['standard','extra'],extensions:[],totouched:true,touchscreen:false,identity_mode:'normal',game_speed:'vvfast',connect_read_clipboard:false,background_music:'music_off',volumn_audio:0,volumn_background:0};
     for(const [k,v]of Object.entries(settings))tx.objectStore('config').put(v,k);
     tx.oncomplete=()=>{db.close();resolve();};tx.onerror=reject;
    };
   });
  });
  await page.goto('http://127.0.0.1:18091/',{waitUntil:'domcontentloaded'});
- await page.waitForFunction(async()=>{const{game,lib}=await import('/noname.js');return game.players.length===3&&Object.keys(lib.character).length>10;},null,{timeout:90000});
- await page.waitForFunction(async()=>{const{ui,_status}=await import('/noname.js');return ui.arena?.getBoundingClientRect().width>0 && _status.imchoosing && _status.paused;},null,{timeout:90000});
+ await page.waitForFunction(async()=>{const{game,lib}=await import('/noname.js');return game.players.length===probePlayers&&Object.keys(lib.character).length>10;},null,{timeout:90000});
+ await page.waitForFunction(async()=>{const{ui,game}=await import('/noname.js');return game.players.length===probePlayers && ui.arena?.getBoundingClientRect().width>0;},null,{timeout:90000});
  await page.waitForTimeout(1000);
  const chooserVisible=await page.locator('.button.character.selectable').first().isVisible();
  if(chooserVisible) await page.screenshot({path:out+'/selection.png'});
@@ -64,7 +66,7 @@ try {
   await page.waitForTimeout(500);
  }
  await page.screenshot({path:out+'/input-state.png'});
- assert.equal(report.runtime.theme,'quark_migration');assert.equal(report.runtime.version,'1.11.7');assert.equal(report.runtime.players,3);assert(report.runtime.handcards>0);assert(report.runtime.background.includes('/assets/background.jpg'));assert(report.runtime.font);assert.deepEqual(report.failedResources,[]);
+ assert.equal(report.runtime.theme,'quark_migration');assert.equal(report.runtime.version,'1.11.7');assert.equal(report.runtime.players,probePlayers);assert(report.runtime.handcards>0);assert(report.runtime.background.includes('/assets/background.jpg'));assert(report.runtime.font);assert.deepEqual(report.failedResources,[]);
  // Inspect native confirm rendering without submitting a synthetic game event.
  report.confirmPresentation=await page.evaluate(async()=>{
   const{ui}=await import('/noname.js');
