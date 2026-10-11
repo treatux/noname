@@ -22,6 +22,8 @@
 - direct/deployment.json：正式 noname-stream 容器 HTTP 返回的十项资源 SHA-256 全部与原包清单相同。
 - 第一批资源/展示回退和一次装备牌提交通过，不证明全美化功能或完整还原。
 
+原包隔离核验补充：full-reference/home-or-start.png 已取得如真似幻真实首页。七项可用 UI 扩展在配置层开启（十周年UI、手杀ui、皮肤切换、EpicFX、如真似幻、假装无敌、选将美化），不表示战场 content 生效。捕获 Failed to fetch；离线游戏按钮原生点击超时，未进入战场。full-reference/runtime.json 与 full-reference-offline.log 保留失败，不判基准通过。跨库缺失扩展及其他扩展UI贡献仍需覆盖，七项不等于全扩展。
+
 仍未完成：原包全部美化同时启用基准与冲突适配；人物面板/camp/hp 完整 DOM；原包布局与手牌排列；按钮/技能/选将/菜单/启动/提示/结算；EpicFX、如真似幻、清瑶运行时的 UI 渲染及功能切换；死亡、自然结算及重新开始的连续验收；手机音视频外网与物理设备体验。
 
 EpicFX/Pixi/Spine/清瑶运行时不能因包含动态渲染而整体排除。排除的是武将皮肤与额外骨骼包下载，不是 UI 特效库和已有 UI 功能。旧 migration-checklist.md / migration-report.md 中整体排除运行时代码和只迁移表现层意图的方向不作为本次执行依据。
