@@ -1,0 +1,38 @@
+{
+  "purpose": "Isolated reference browser profile metadata for Quark UI migration",
+  "engine": "quark-1.12.7.0711_beta_reference_only",
+  "container": "noname-quark",
+  "cdp": "127.0.0.1:19227",
+  "mount": "/root/noname-cloud/reference/quark-handheld/runtime:/srv/game:ro",
+  "existing_profile": "noname-quark_profile (preserved; not reused for migration writes)",
+  "migration_profile": "/root/noname-cloud/evidence/quark-migration/reference-profile",
+  "profile_policy": [
+    "Use a dedicated Chromium user-data directory for migration captures.",
+    "Do not copy cookies, account fields, tokens, signatures, or private localStorage.",
+    "Do not alter the existing noname-quark_profile or runtime user data.",
+    "Seed only a whitelisted UI configuration from the supplied backup; omit account and recording fields.",
+    "Disable character skins and dynamic skeleton/Spine assets.",
+    "Do not execute extension source in the host process; capture only approved runtime evidence."
+  ],
+  "config_source": "/root/noname-cloud/reference/quark-handheld/runtime/无名杀 - 数据 - 2025.7.21 16.06.26",
+  "config_source_policy": "read-only, whitelist-only, private values omitted",
+  "enabled_ui_scope": [
+    "十周年UI",
+    "手杀ui",
+    "皮肤切换 (UI resolver only; no skin payload)",
+    "EpicFX (CSS/button/card presentation only)",
+    "如真似幻 (home/menu presentation only; no remote code)",
+    "选将美化",
+    "假装无敌 (UI presentation only; no character skin/dynamic payload)",
+    "曹髦滴圣剑 (visual layer only; character skill behavior excluded)"
+  ],
+  "excluded_scope": [
+    "武将静态皮肤",
+    "动态皮肤",
+    "Spine/Live2D/skeleton assets",
+    "AIoptimize gameplay changes",
+    "规则、技能、牌堆、模式和事件 patches",
+    "account, credentials, signed URLs and user data"
+  ],
+  "status": "metadata established; isolated runtime capture pending"
+}

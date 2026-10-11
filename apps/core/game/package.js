@@ -141,6 +141,7 @@ window.noname_package = {
 		woodden: "木纹",
 		music: "音乐",
 		simple: "简约",
-		handheld: "手杀风·云端",
+		handheld: "手杀风·云端（历史）",
+		quark_migration: "夸克 UI 适配·云端",
 	},
 };
