@@ -1,11 +1,52 @@
 // UI-only decoration; native Player, events, rules and AI stay authoritative.
 import {lib, game, ui, _status, get} from '../../noname.js';
+import {computeQuarkHandLayout} from './quark-hand-layout.js';
 let installed = false;
 export function installQuarkPresentation() {
  if (installed) return;
  installed = true;
  let scheduled = false;
  const playerMounts = new Map();
+ // Adapt only the presentation entry point. The original remains authoritative
+ // for every other theme and is reinstated on fallback; no card/event/AI hook.
+ const nativeUpdateHand = ui.updatehl;
+ let handLayoutActive = false;
+ function updateHand() {
+  if (lib.config.theme !== 'quark_migration') return nativeUpdateHand.call(ui);
+  handLayoutActive = true;
+  for (const container of [ui.handcards1Container, ui.handcards2Container]) {
+   const hand = container?.firstElementChild;
+   if (!hand) continue;
+   const cards = [...hand.children].filter(n => n.classList.contains('card') && !n.classList.contains('removing'));
+   if (!cards.length) {hand.style.width = '100%';container.classList.remove('scrollh');continue;}
+   // Supplied 十周年UI extension.js:9795-9877 (left aligned, min 27*scale).
+   // getCardBestScale/getHandCardSize:10764-10777. Native card selection
+   // adds its own translateY to _transform, so no input handler is replaced.
+   const cw = cards[0].offsetWidth, ch = cards[0].offsetHeight;
+   const mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|OperaMini/i.test(navigator.userAgent);
+   const scale = Math.min(document.body.offsetHeight * (mobile ? 0.23 : 0.18) / (ch * 0.95), 1);
+   // Supplied layout.resize:10068-10072 sizes the hand wrapper from the
+   // same scale, rather than the stylesheet's initial 170px placeholder.
+   ui.arena.style.setProperty('--quark-hand-height', Math.round(ch * 0.95 * scale + 30.4) + 'px');
+   const skillCount = ui.skills?.children.length || 0;
+   const width = ui.me.offsetWidth * (skillCount > 2 ? 0.95 : 0.996);
+   const layout = computeQuarkHandLayout({count:cards.length,width,cardWidth:cw,cardHeight:ch,scale,fold:lib.config.fold_card});
+   const {expand, y} = layout;
+   cards.forEach((card, i) => {
+    const x = layout.positions[i];
+    card._transform = `translate(${x}px,${y}px) scale(${scale})`;
+    card.style.transform = card._transform + (card.classList.contains('selected') ? ' translateY(-20px)' : '');
+    card.classList.remove('drawinghidden');
+    // Clear only native cramped-card transforms, not suit/rank content.
+    if (card.node?.info) {card.node.info.style.transform = '';const span = card.node.info.querySelector('span');if (span) span.style.display = '';}
+    if (card.node?.name) {card.node.name.style.transform = '';card.node.name.style.transformOrigin = '';}
+   });
+   container.classList.toggle('scrollh', expand);
+   container.style.overflowX = expand ? 'scroll' : '';
+   container.style.overflowY = expand ? 'hidden' : '';
+   hand.style.width = expand ? layout.width + 'px' : '100%';
+  }
+ }
  function restorePlayer(player, mount) {
   for (const original of mount.originals) {
    if (original.next?.parentNode === original.parent) original.parent.insertBefore(original.node, original.next);
@@ -18,6 +59,16 @@ export function installQuarkPresentation() {
  function sync() {
   scheduled = false;
   const enabled = lib.config.theme === 'quark_migration';
+  if (enabled) {
+   if (ui.updatehl !== updateHand) ui.updatehl = updateHand;
+   updateHand();
+  } else if (handLayoutActive) {
+   if (ui.updatehl === updateHand) ui.updatehl = nativeUpdateHand;
+   for (const container of [ui.handcards1Container, ui.handcards2Container]) if (container) {container.style.overflowX = '';container.style.overflowY = '';}
+   ui.arena?.style.removeProperty('--quark-hand-height');
+   handLayoutActive = false;
+   nativeUpdateHand.call(ui);
+  }
   for (const card of document.querySelectorAll('.card')) {
    let title = card.querySelector(':scope > .quark-top-name');
    if (!enabled || !card.name) {title?.remove();continue;}
@@ -89,6 +140,7 @@ export function installQuarkPresentation() {
   requestAnimationFrame(sync);
  };
  new MutationObserver(schedule).observe(document.documentElement, {childList: true, subtree: true});
+ window.addEventListener('resize', schedule);
  lib.announce.subscribe('Noname.Apperaence.Theme.onChangeFinished', schedule);
  schedule();
 }

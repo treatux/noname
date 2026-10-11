@@ -1,0 +1,18 @@
+import fs from 'node:fs/promises';
+import assert from 'node:assert/strict';
+const [referenceDir,targetDir]=process.argv.slice(2);
+if(!referenceDir||!targetDir)throw new Error('usage: node scripts/quark-hand-compare.mjs referenceDir targetDir');
+const ref=JSON.parse(await fs.readFile(referenceDir+'/runtime-before-screenshot.json'));
+const target=JSON.parse(await fs.readFile(targetDir+'/runtime.json'));
+const fields=['x','y','width','height'];
+const delta=(a,b)=>Object.fromEntries(fields.map(k=>[k,b[k]-a[k]]));
+const hand=ref.geometry.hand.filter(c=>c.y>500).slice(0,target.runtime.handLayout.cards.length);
+const output={scope:'Geometry subset only, random characters/cards and event stages differ; NOT full visual acceptance',referenceVersion:ref.runtime.version,targetVersion:target.runtime.version,players:target.runtime.playerMounts.map((p,i)=>delta(ref.geometry.players[i],p.rect)),hand:hand.map((c,i)=>delta(c,target.runtime.handLayout.cards[i])),referenceScale:ref.geometry.handBounds.scale,targetTransforms:target.runtime.handLayout.transforms,manualUseCard:target.manualUseCard,useCardHistory:target.useCardHistory,fallback:target.fallback,errors:target.errors};
+assert(output.players.every(d=>fields.every(k=>Math.abs(d[k])<.05)));
+assert(output.hand.length>0);
+assert(output.hand.every(d=>fields.every(k=>Math.abs(d[k])<.05)));
+assert.equal(target.fallback.updateHook,'updatehl');
+assert.deepEqual(target.errors,[]);
+output.geometrySubsetPassed=true;
+await fs.writeFile(targetDir+'/geometry-subset.json',JSON.stringify(output,null,2));
+console.log(JSON.stringify(output,null,2));

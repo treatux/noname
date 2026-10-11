@@ -156,27 +156,7 @@ html {background-image: url('./assets/background.jpg') !important; background-si
 /* Native reference menus retain their engine panels. Only use the supplied
    font here until each overlapping extension menu has a measured adapter. */
 #window .quark-menu {font-family:quark-shousha;}
-/* Original 十周年UI/layout.css hand-wrap geometry, kept on the native
-   #me/#handcards1 nodes so the engine still owns card reflow and selection. */
-#arena.quark-player-presentation:not(.chess) #handcards1 {
- height:120px;padding:0;top:calc(100% - 120px);
-}
-#arena.quark-player-presentation:not(.chess):not(.single-handcard) #handcards1 {
- width:calc(100% - 240px);
- left:calc(150% / 47 - 300% / 94 + 625% / 47 - 105px + 120px);
-}
-#arena.quark-player-presentation:not(.single-handcard):not(.chess) > #me,
-#arena.quark-player-presentation:not(.single-handcard):not(.chess) > #mebg,
-#arena.quark-player-presentation:not(.single-handcard):not(.chess) > #autonode {
- left:0 !important;bottom:38px !important;width:calc(9700% / 94) !important;
-}
-#arena.quark-player-presentation:not(.single-handcard):not(.chess) > #mebg {visibility:hidden;}
-#arena.quark-player-presentation:not(.single-handcard):not(.chess) > #me #handcards1 {
- left:150px !important;width:calc(100% - 150px) !important;
-}
-#arena.quark-player-presentation:not(.single-handcard):not(.chess) > #me #handcards1 > .handcards {left:0 !important;}
-#arena.quark-player-presentation:not(.chess) #handcards1.scrollh {top:calc(100% - 180px);height:180px;overflow-x:scroll;overflow-y:hidden;}
-#arena.quark-player-presentation:not(.chess) #handcards1.scrollh > div {height:120px;top:60px;}
+#arena.quark-player-presentation:not(.chess) > #mebg {visibility:hidden;}
 /* Native character chooser skin from 手杀ui/character/main1.css and
    十周年UI/doudizhu.css. Selection/click handlers remain upstream. */
 #arena.quark-player-presentation.choose-character > .dialog,
@@ -209,3 +189,31 @@ html {background-image: url('./assets/background.jpg') !important; background-si
 #arena.quark-player-presentation #chooseable .button.character {background-image:url('./assets/choose-jbg.png');background-size:100% 100%;background-color:transparent;border-width:8px 6px 14px 18px;}
 #arena.quark-player-presentation.choose-character #control,
 #arena.quark-player-presentation #identitychoose + #control {bottom:30px;}
+/* Supplied 十周年UI/layout.css:155-168 defines the arena containing block.
+   Its player bottom:1% must be resolved inside this block, not nova's taller one. */
+#arena.quark-player-presentation:not(.chess) {
+ left:22px;right:25px;top:10%;bottom:1%;width:auto;height:auto;
+ transition-property:opacity;
+}
+#arena.quark-player-presentation.phone:not(.chess) {top:2%;}
+/* Actual supplied layout.css:218-310 rightLayout=on, aloneEquip=off.
+   Map hand-wrap/hand-cards to native #me/#handcards1 without replacing nodes. */
+#arena.quark-player-presentation:not(.chess) > #me {
+ left:95px !important;right:365px !important;bottom:1% !important;
+ width:auto !important;height:var(--quark-hand-height,170px) !important;transition:none;
+}
+#arena.quark-player-presentation:not(.chess) > #me > #handcards1 {
+ left:0 !important;top:0 !important;width:100% !important;height:100%;padding:0;
+}
+#arena.quark-player-presentation:not(.chess):not(.single-handcard) > #me > #handcards1 > .handcards {
+ display:inline-block;position:absolute !important;left:1.8px !important;top:auto !important;bottom:-3px;
+ height:calc(100% - 30px) !important;min-width:100%;padding:0;margin:0 !important;
+}
+#arena.quark-player-presentation:not(.chess) #handcards1 > .handcards > .card {
+ position:absolute;left:0;top:auto !important;bottom:-30px;margin:0 0 0 1px;
+ width:108px;height:150px;scale:1.15;transition-property:transform,opacity,left,top;
+}
+#arena.quark-player-presentation:not(.chess) #handcards1.scrollh {
+ top:0;height:100%;overflow-x:scroll;overflow-y:hidden;
+}
+#arena.quark-player-presentation:not(.chess) #handcards1.scrollh > .handcards {top:auto !important;}

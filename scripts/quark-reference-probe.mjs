@@ -68,6 +68,17 @@ try{
   console.log('stage: offline navigation initiated');
   await page.waitForTimeout(Number(process.env.REFERENCE_BOOT_WAIT || 30000));
   console.log('stage: post-navigation inspection');
+  // Touch can be swallowed by the homepage animation/modal. Retry using the
+  // real DOM click path and hit-test coordinates, never call game start APIs.
+  for (let retry=0;retry<3 && !await page.locator('#arena').count();retry++) {
+   const target=page.locator('#offlinebutton');
+   if (!await target.isVisible().catch(()=>false)) break;
+   const box=await target.boundingBox();
+   report.homeRetries ??= [];
+   report.homeRetries.push(await page.evaluate(({x,y})=>({x,y,hit:document.elementFromPoint(x,y)?.id,path:location.pathname}),{x:box.x+box.width/2,y:box.y+box.height/2}));
+   await page.mouse.click(box.x+box.width/2,box.y+box.height/2);
+   await page.waitForTimeout(10000);
+  }
   const qa=page.locator('.cookie_qa input');
   if(await qa.count()===2){
    await qa.nth(0).fill('无名杀十周年');await qa.nth(1).fill('去fanbook频道');
@@ -90,7 +101,7 @@ try{
  }), 'runtime inspection');
  report.geometry=await bounded(page.evaluate(()=>{
   const rect=n=>{const r=n.getBoundingClientRect();const s=getComputedStyle(n);return {class:n.className,position:n.dataset.position,x:r.x,y:r.y,width:r.width,height:r.height,font:s.fontFamily,fontSize:s.fontSize,background:s.backgroundImage,transform:s.transform};};
-  return {arena:document.querySelector('#arena')?rect(document.querySelector('#arena')):null,players:[...document.querySelectorAll('#arena > .player')].map(rect),hand:[...document.querySelectorAll('.handcards > .card')].map(rect),skills:[...document.querySelectorAll('.skill-control,.skill-control > div,.skill-control .skillitem')].map(rect),controls:[...document.querySelectorAll('.control')].map(rect)};
+  return {handBounds:window.decadeUI ? {scale:window.decadeUI.getCardBestScale(),size:window.decadeUI.getHandCardSize(),bounds:{width:window.decadeUI.boundsCaches.hand.width,height:window.decadeUI.boundsCaches.hand.height,cardWidth:window.decadeUI.boundsCaches.hand.cardWidth,cardHeight:window.decadeUI.boundsCaches.hand.cardHeight}}:null,handContainers:[...document.querySelectorAll('#me,#handcards1,.hand-wrap,.hand-cards,.handcards')].map(rect),arena:document.querySelector('#arena')?rect(document.querySelector('#arena')):null,players:[...document.querySelectorAll('#arena > .player')].map(rect),hand:[...document.querySelectorAll('.handcards > .card')].map(rect),skills:[...document.querySelectorAll('.skill-control,.skill-control > div,.skill-control .skillitem')].map(rect),controls:[...document.querySelectorAll('.control')].map(rect)};
  }), 'geometry');
  await fs.writeFile(out+'/runtime-before-screenshot.json',JSON.stringify(report,null,2));
  await page.screenshot({path:out+'/offline-or-battle.png',timeout:15000,animations:'disabled'});
