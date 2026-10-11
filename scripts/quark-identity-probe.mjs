@@ -140,11 +140,11 @@ try {
     const r = n.getBoundingClientRect(); return [r.x, r.y, r.width, r.height];
    });
    const sheet = [...document.querySelectorAll('link[rel=stylesheet]')].find(n => n.href.includes('/theme/quark_migration/'));
-   const before = rects(); const on = getComputedStyle(document.documentElement).getPropertyValue('--quark-gold');
+   const before = rects(); const on = sheet.disabled === false;
    sheet.disabled = true; const fallback = rects();
-   const off = getComputedStyle(document.documentElement).getPropertyValue('--quark-gold');
+   const off = sheet.disabled === true;
    sheet.disabled = false;
-   return { before, fallback, unchanged: JSON.stringify(before) === JSON.stringify(fallback), themePresent: on.trim() === '', themeRemoved: !off.trim() };
+   return { before, fallback, unchanged: JSON.stringify(before) === JSON.stringify(fallback), themePresent: on, themeDisabledDuringComparison: off };
   });
   report.geometry = geometry;
   // Verify runtime state selectors on actual native nodes. Synthetic classes
@@ -174,13 +174,14 @@ try {
   report.fallback = await page.evaluate(async () => {
    const { lib, ui } = await import('/noname.js');
    await lib.configMenu.appearence.config.theme.onclick('simple');
-   return { theme: lib.config.theme, href: ui.css.theme?.href, originalThemeRemoved: !document.querySelector('link[href*="/theme/quark_migration/"]') };
+   await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+   return { theme: lib.config.theme, href: ui.css.theme?.href, originalThemeRemoved: !document.querySelector('link[href*="/theme/quark_migration/"]'), wrappersRemoved:!document.querySelector('#arena > .player > .camp-wrap'), originalParentsRestored:[...document.querySelectorAll('#arena > .player')].every(p=>p.node.hp.parentNode===p&&p.node.name.parentNode===p) };
   });
   await page.screenshot({ path: `${evidence}/quark-${mode}-fallback.png` });
   report.errors = errors;
   const expectedSeats = { identity: 8, guozhan: 8, doudizhu: 3 }[mode];
   report.expectedSeats = expectedSeats;
-  report.presentationPassed = report.themeLoaded && geometry.themeRemoved && report.fallback.originalThemeRemoved && report.fallback.theme === 'simple' && report.fallback.href?.includes('/theme/simple/') && errors.length === 0 && (!expectedSeats || report.players === expectedSeats);
+  report.presentationPassed = report.themeLoaded && geometry.themePresent && report.fallback.wrappersRemoved && report.fallback.originalParentsRestored && report.fallback.originalThemeRemoved && report.fallback.theme === 'simple' && report.fallback.href?.includes('/theme/simple/') && errors.length === 0 && (!expectedSeats || report.players === expectedSeats);
   report.aiUseCardObserved = report.useCardHistory > 0;
   report.passed = report.presentationPassed;
   // Style acceptance is separate from AI/human action acceptance.

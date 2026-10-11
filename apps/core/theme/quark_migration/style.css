@@ -128,14 +128,14 @@ html {background-image: url('./assets/background.jpg') !important; background-si
 }
 /* Skill controls: original 手杀ui/main1.css typography and 十周年金色
    state treatment, applied to native ui.skills/ui.skills2/ui.skills3 controls. */
-#arena.quark-player-presentation > .skill-control,
-#arena.quark-player-presentation > .quark-skill-control {
+#arena.quark-player-presentation .skill-control,
+#arena.quark-player-presentation .quark-skill-control {
  position:absolute;right:153px;bottom:20px;z-index:6;max-width:200px;zoom:1.1;
  pointer-events:none;background:transparent;box-shadow:none;padding:0;display:flex;
  flex-direction:row-reverse;flex-wrap:wrap-reverse;align-items:flex-end;
 }
-#arena.quark-player-presentation > .skill-control > div,
-#arena.quark-player-presentation > .quark-skill-control > div {
+#arena.quark-player-presentation .skill-control > div,
+#arena.quark-player-presentation .quark-skill-control > div {
  position:relative;display:flex;align-items:center;justify-content:center;
  width:75px;height:40px;margin:0 2px;pointer-events:auto;
  color:#f0d775;font:400 24px/1 quark-HYZLSJ;
@@ -143,46 +143,19 @@ html {background-image: url('./assets/background.jpg') !important; background-si
  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
  text-shadow:0 0 3px rgba(2,3,2,.6);
 }
-#arena.quark-player-presentation > .skill-control > div:hover,
-#arena.quark-player-presentation > .quark-skill-control > div:hover,
-#arena.quark-player-presentation > .skill-control > div.active,
-#arena.quark-player-presentation > .quark-skill-control > div.active {
+#arena.quark-player-presentation .skill-control > div:hover,
+#arena.quark-player-presentation .quark-skill-control > div:hover,
+#arena.quark-player-presentation .skill-control > div.active,
+#arena.quark-player-presentation .quark-skill-control > div.active {
  filter:brightness(1.25);transform:translateY(-2px);
 }
-#arena.quark-player-presentation > .skill-control > div.disabled,
-#arena.quark-player-presentation > .quark-skill-control > div.disabled,
-#arena.quark-player-presentation > .skill-control > div:not(.usable),
-#arena.quark-player-presentation > .quark-skill-control > div:not(.usable) {opacity:.45;}
-#arena.quark-player-presentation > .skill-control > div:last-child,
-#arena.quark-player-presentation > .quark-skill-control > div:last-child {width:110px;}
-/* Native menu/dialog skin: preserve ui.create.menu(), close handlers and
-   Vue menu state while matching the supplied translucent dark panel language. */
-#window .menu.quark-menu,
-#window .new-menu.quark-menu,
-#window > .dialog.popped.quark-menu,
-#window .dialog.quark-menu {
- font-family:quark-shousha;color:#f1e5c4;text-shadow:1px 1px 2px #17120e;
- background:rgba(34,27,24,.86);border:1px solid rgba(214,178,104,.62);
- box-shadow:0 0 0 2px rgba(41,27,20,.62),0 4px 18px rgba(0,0,0,.5);
-}
-#window .quark-menu .menubutton,
-#window .quark-menu .new-menubutton,
-#window .quark-menu .button,
-#window .quark-menu .dialogbutton {
- color:#f0d775;font-family:quark-HYZLSJ;text-shadow:1px 1px 2px #332715;
- background:linear-gradient(rgba(82,62,45,.92),rgba(35,27,24,.94));
- border:1px solid rgba(221,185,107,.48);box-shadow:inset 0 0 0 1px rgba(30,20,15,.6),0 2px 5px rgba(0,0,0,.35);
- border-radius:4px;transition:filter .12s,transform .12s;
-}
-#window .quark-menu .menubutton:hover,
-#window .quark-menu .new-menubutton:hover,
-#window .quark-menu .button:hover,
-#window .quark-menu .dialogbutton:hover {filter:brightness(1.2);transform:translateY(-1px);}
-#window .quark-menu .menubutton.selected,
-#window .quark-menu .new-menubutton.selected,
-#window .quark-menu .button.selected {background:linear-gradient(rgba(123,94,43,.95),rgba(67,48,25,.95));color:#fff4ad;}
-#window .quark-menu .caption,
-#window .quark-menu .title {color:#f5d982;font-family:quark-HYZLSJ;}
+#arena.quark-player-presentation .skill-control > div.disabled,
+#arena.quark-player-presentation .quark-skill-control > div.disabled {opacity:.45;}
+#arena.quark-player-presentation .skill-control > div:last-child,
+#arena.quark-player-presentation .quark-skill-control > div:last-child {width:110px;}
+/* Native reference menus retain their engine panels. Only use the supplied
+   font here until each overlapping extension menu has a measured adapter. */
+#window .quark-menu {font-family:quark-shousha;}
 /* Original 十周年UI/layout.css hand-wrap geometry, kept on the native
    #me/#handcards1 nodes so the engine still owns card reflow and selection. */
 #arena.quark-player-presentation:not(.chess) #handcards1 {

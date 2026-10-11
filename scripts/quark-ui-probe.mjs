@@ -9,36 +9,52 @@ const browser=await chromium.launch({executablePath:'/root/.cache/ms-playwright/
 const context=await browser.newContext({viewport:{width:1280,height:720}});
 const page=await context.newPage();
 const report={scope:'Real-resource first batch only',errors:[],failedResources:[],manualUseCard:false};
-page.on('pageerror',e=>report.errors.push(String(e)));
+page.on('pageerror',e=>{report.errors.push(String(e));console.error('pageerror:',String(e));});
 page.on('response',r=>{if(r.status()>=400&&r.url().includes('/theme/quark_migration/'))report.failedResources.push({path:new URL(r.url()).pathname,status:r.status()});});
 page.on('dialog',d=>d.dismiss());
 try {
  await page.route('**/preload.js',r=>r.fulfill({status:404,body:''}));
  await page.route('**/cloud-seed.html',r=>r.fulfill({contentType:'text/html',body:'<!doctype html><title>isolated seed</title>'}));
+ console.log('stage: seed');
  await page.goto('http://127.0.0.1:18091/cloud-seed.html');
- await page.evaluate(async()=>{
+ await page.evaluate(async({probeMode,probePlayers})=>{
   localStorage.setItem('gplv3_noname_alerted','true'); sessionStorage.setItem('isJITReloaded','true');sessionStorage.setItem('canUseTs','true');
   await new Promise((resolve,reject)=>{
    const req=indexedDB.open('noname_0.9_data',4);
    req.onupgradeneeded=()=>{for(const n of ['config','data','image','audio'])if(!req.result.objectStoreNames.contains(n))req.result.createObjectStore(n);if(!req.result.objectStoreNames.contains('video'))req.result.createObjectStore('video',{keyPath:'time'});};
    req.onerror=reject;req.onsuccess=()=>{const db=req.result;const tx=db.transaction('config','readwrite');
-    const settings={mode:probeMode,theme:'quark_migration',layout:'nova',player_number:probePlayers,new_tutorial:true,show_splash:'off',version:'1.11.7',characters:['standard','shenhua','refresh'],cards:['standard','extra'],extensions:[],totouched:true,touchscreen:false,identity_mode:'normal',game_speed:'vvfast',connect_read_clipboard:false,background_music:'music_off',volumn_audio:0,volumn_background:0};
+    const settings={mode:probeMode,theme:'quark_migration',layout:'nova',player_number:probePlayers,new_tutorial:true,show_splash:'off',version:'1.11.7',free_choose:true,characters:['standard','shenhua','refresh'],cards:['standard','extra'],extensions:[],totouched:true,touchscreen:false,identity_mode:'normal',game_speed:'vvfast',connect_read_clipboard:false,background_music:'music_off',volumn_audio:0,volumn_background:0};
     for(const [k,v]of Object.entries(settings))tx.objectStore('config').put(v,k);
     tx.oncomplete=()=>{db.close();resolve();};tx.onerror=reject;
    };
   });
- });
+ },{probeMode,probePlayers});
+ console.log('stage: engine');
  await page.goto('http://127.0.0.1:18091/',{waitUntil:'domcontentloaded'});
- await page.waitForFunction(async()=>{const{game,lib}=await import('/noname.js');return game.players.length===probePlayers&&Object.keys(lib.character).length>10;},null,{timeout:90000});
- await page.waitForFunction(async()=>{const{ui,game}=await import('/noname.js');return game.players.length===probePlayers && ui.arena?.getBoundingClientRect().width>0;},null,{timeout:90000});
+ await page.waitForFunction(async expected=>{const{game,lib}=await import('/noname.js');return game.players.length===expected&&Object.keys(lib.character).length>10;},probePlayers,{timeout:90000});
+ await page.waitForFunction(async expected=>{const{ui,game}=await import('/noname.js');return game.players.length===expected && ui.arena?.getBoundingClientRect().width>0;},probePlayers,{timeout:90000});
  await page.waitForTimeout(1000);
+ console.log('stage: chooser');
  const chooserVisible=await page.locator('.button.character.selectable').first().isVisible();
  if(chooserVisible) await page.screenshot({path:out+'/selection.png'});
  else report.selectionScreenshotValid=false;
  for(let i=0;i<100;i++){
   if(await page.locator('.handcards > .card').count())break;
-  const button=page.locator('.button.character.selectable:not(.selected)').first();if(await button.isVisible())await button.click({timeout:1500}).catch(()=>{});
-  const confirm=page.locator('.control > div').filter({hasText:/^确定$/}).first();if(await confirm.isVisible())await confirm.click({timeout:1500}).catch(()=>{});
+  let button=page.locator('.button.character.selectable:not(.selected)').first();
+  if (process.env.SKILL_ACTIVE && !report.chosenActiveCharacter) {
+   const candidate=await page.evaluate(async()=>{
+    const {lib}=await import('/noname.js');
+    return [...document.querySelectorAll('.button.character.selectable:not(.selected)')].map((n,index)=>({name:n.link,index,skills:lib.character[n.link]?.skills || lib.character[n.link]?.[3] || []})).find(c=>c.skills.some(k=>{const en=lib.skill[k]?.enable;return en==='phaseUse'||Array.isArray(en)&&en.includes('phaseUse');}));
+   });
+   if(candidate){report.chosenActiveCharacter=candidate;button=page.locator('.button.character.selectable:not(.selected)').nth(candidate.index);}
+  }
+  if (process.env.SKILL_CHARACTER) {
+   const index=await page.locator('.button.character.selectable:not(.selected)').evaluateAll((nodes,name)=>nodes.findIndex(n=>n._link===name||n.link===name),process.env.SKILL_CHARACTER);
+   if (index<0) throw new Error('Requested native chooser character is unavailable: '+process.env.SKILL_CHARACTER);
+   if (index>=0) button=page.locator('.button.character.selectable:not(.selected)').nth(index);
+  }
+  if(await button.isVisible({timeout:500}).catch(()=>false))await button.click({timeout:1500}).catch(()=>{});
+  const confirm=page.locator('.control > div').filter({hasText:/^确定$/}).first();if(await confirm.isVisible({timeout:500}).catch(()=>false))await confirm.click({timeout:1500}).catch(()=>{});
   await page.waitForTimeout(500);
  }
  await page.waitForFunction(()=>document.querySelector('.handcards > .card'),null,{timeout:30000});
@@ -49,24 +65,29 @@ try {
   return{version:lib.version,theme:lib.config.theme,mode:lib.config.mode,players:game.players.length,handcards:document.querySelectorAll('.handcards > .card').length,href:ui.css.theme.href,playerMounts:[...document.querySelectorAll('#arena > .player')].map(p=>({nameInCamp:p.node.name.parentNode.className,hpInWrap:p.node.hp.parentNode.className,originalHpSame:p.node.hp===p.querySelector('.hp'),group:p.group,rect:JSON.parse(JSON.stringify(p.getBoundingClientRect())),nameVisible:getComputedStyle(p.node.name).visibility,paint:[...p.children].map(n=>({class:n.className,rect:JSON.parse(JSON.stringify(n.getBoundingClientRect())),bg:getComputedStyle(n).backgroundColor,image:getComputedStyle(n).backgroundImage,z:getComputedStyle(n).zIndex,display:getComputedStyle(n).display}))})),cardTitles:document.querySelectorAll('.quark-top-name').length,cardFace:document.querySelector('.handcards > .card')?getComputedStyle(document.querySelector('.handcards > .card')).backgroundImage:null,skillControls:[...document.querySelectorAll('.skill-control, .quark-skill-control')].map(n=>({class:n.className,children:n.children.length,rect:JSON.parse(JSON.stringify(n.getBoundingClientRect())),font:getComputedStyle(n).fontFamily})),handLayout:{container:document.querySelector('#handcards1')?JSON.parse(JSON.stringify(document.querySelector('#handcards1').getBoundingClientRect())):null,cards:[...document.querySelectorAll('#handcards1 > .handcards > .card')].map(n=>JSON.parse(JSON.stringify(n.getBoundingClientRect())))},menus:[...document.querySelectorAll('.menu, .new-menu, .dialog.popped')].map(n=>({class:n.className,quark:n.classList.contains('quark-menu')})),background:getComputedStyle(document.documentElement).backgroundImage,font:document.fonts.check('16px quark-shousha'),ornaments:[...document.querySelectorAll('.quark-rarity-long')].map(n=>({src:n.getAttribute('src'),loaded:n.complete&&n.naturalWidth>0,pointerEvents:getComputedStyle(n).pointerEvents}))};
  });
  await page.screenshot({path:out+'/battle.png'});
+ await fs.writeFile(out+'/battle-state.json',JSON.stringify(report,null,2));
+ console.log('stage: menu');
  report.menuProbe = await (async()=>{
   const before = await page.locator('.menu:visible, .new-menu:visible, .dialog.popped:visible').count();
-  const option = page.locator('.menubutton, .control > div').filter({hasText:/^选项$/}).first();
+  const option = page.getByText('选项',{exact:true}).first();
   const clicked = await option.isVisible().catch(()=>false);
   if (clicked) await option.click({timeout:3000}).catch(()=>{});
   await page.waitForTimeout(500);
   const visible = await page.locator('.menu:visible, .new-menu:visible, .dialog.popped:visible').count();
-  const nodes = await page.evaluate(()=>[...document.querySelectorAll('.menu:visible,.new-menu:visible,.dialog.popped:visible')].map(n=>({class:n.className,quark:n.classList.contains('quark-menu'),text:n.innerText.slice(0,180)})));
+  const nodes = await page.evaluate(()=>[...document.querySelectorAll('.menu,.new-menu,.dialog.popped')].filter(n=>n.checkVisibility({visibilityProperty:true,opacityProperty:true})&&!n.closest('.hidden')).map(n=>({class:n.className,quark:n.classList.contains('quark-menu'),text:n.innerText.slice(0,180)})));
   await page.screenshot({path:out+'/menu-click.png'});
+  if(clicked) await page.locator('.menu-container:not(.hidden)').click({position:{x:8,y:8},timeout:2000}).catch(()=>{});
   return {before,clicked,visible,opened:clicked&&visible>0,nodes};
  })();
+ console.log('stage: skill');
  if (process.env.SKILL_PROBE) {
   report.skillProbe = {seen:false, clicked:false, historyBefore:0, historyAfter:0};
   report.skillProbe.historyBefore = await page.evaluate(async()=>{const{game}=await import('/noname.js');return game.me.getAllHistory('useSkill').length;});
+  report.skillProbe.player=await page.evaluate(async()=>{const{game,_status}=await import('/noname.js');return {name:game.me.name,skills:game.me.getSkills(),event:_status.event.name,paused2:!!_status.paused2,auto:!!_status.auto};});
   const deadline = Date.now() + Number(process.env.SKILL_WAIT_MS || 12000);
   while (Date.now() < deadline) {
-   const skill = page.locator('.skill-control > div:not(:last-child), .quark-skill-control > div:not(:last-child)').filter({visible:true}).first();
-   if (await skill.count() && await skill.isVisible().catch(()=>false)) {
+   const skill = page.locator('.quark-skill-control > div:visible').first();
+   if (await skill.count() && await skill.isVisible({timeout:500}).catch(()=>false)) {
     report.skillProbe.seen=true; await skill.click({timeout:3000}).catch(()=>{}); report.skillProbe.clicked=true; break;
    }
    await page.waitForTimeout(500);
@@ -76,6 +97,8 @@ try {
   report.skillProbe.controls = await page.evaluate(()=>[...document.querySelectorAll('.skill-control,.quark-skill-control')].map(n=>({class:n.className,children:n.children.length,html:n.innerText})));
   await page.screenshot({path:out+'/skill-state.png'});
  }
+ await fs.writeFile(out+'/interaction-state.json',JSON.stringify(report,null,2));
+ console.log('stage: card input');
  // Native mouse input only: never call player.useCard or enable AI for proof.
  const initial=await page.evaluate(async()=>{const{game}=await import('/noname.js');return game.me.getAllHistory('useCard').length;});
  report.inputs=[];
@@ -93,7 +116,7 @@ try {
   await page.waitForTimeout(500);
  }
  await page.screenshot({path:out+'/input-state.png'});
- assert.equal(report.runtime.theme,'quark_migration');assert.equal(report.runtime.version,'1.11.7');assert.equal(report.runtime.players,probePlayers);assert(report.runtime.handcards>0);assert(report.runtime.background.includes('/assets/background.jpg'));assert(report.runtime.font);assert.deepEqual(report.failedResources,[]);
+ assert.equal(report.runtime.theme,'quark_migration');assert.equal(report.runtime.version,'1.11.7');assert.equal(report.runtime.players,probePlayers);assert(report.runtime.handcards>0);assert(report.runtime.background.includes('/assets/background.jpg'));assert(report.runtime.font);assert.deepEqual(report.failedResources,[]);assert.deepEqual(report.errors,[]);
  // Inspect native confirm rendering without submitting a synthetic game event.
  report.confirmPresentation=await page.evaluate(async()=>{
   const{ui}=await import('/noname.js');
