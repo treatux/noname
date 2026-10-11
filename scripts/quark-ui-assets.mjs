@@ -16,6 +16,8 @@ const pairs = [
  ...['btn0.png','btn1.png','btn2.png'].map(x=>[`extension/手杀ui/skill/images/${x}`,`skill/${x}`]),
  ['extension/手杀ui/character/images/dialog2.png','character-dialog2.png'],
  ['extension/十周年UI/assets/image/jbg.png','choose-jbg.png'],
+ ['extension/十周年UI/image/decoration/shousha_shoupai.png','player-card-count.png'],
+ ...['zhu','zhong','fan','nei','guessing','cai','dizhu','nongmin'].map(x=>[`extension/十周年UI/image/decorations/identity2_${x}.png`,`identity/${x}.png`]),
  ...['wei','shu','wu','qun','shen','jin','key'].map(x=>[`extension/十周年UI/image/decorations/name2_${x}.png`,`name2_${x}.png`]),
  ...['common','rare','epic','legend','junk'].map(x=>[`extension/十周年UI/assets/image/long_${x}.png`,`long_${x}.png`]),
 ];

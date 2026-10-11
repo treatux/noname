@@ -55,7 +55,10 @@ export function installQuarkPresentation() {
    else original.parent.append(original.node);
    original.node.className = original.className;
   }
-  mount.camp.remove(); mount.hp.remove();
+  mount.camp.remove(); mount.hp.remove();mount.identityImage?.remove();
+  player.node.count.classList.remove('quark-card-count');
+  if(mount.countText===undefined)delete player.node.count.dataset.text;else player.node.count.dataset.text=mount.countText;
+  player.node.identity.classList.remove('quark-identity-image');
   playerMounts.delete(player);
  }
  function sync() {
@@ -106,10 +109,23 @@ export function installQuarkPresentation() {
     const placeholder = document.createElement('div'); placeholder.className = 'avatar-name-default';placeholder.innerHTML = '主<br>将';camp.append(placeholder);
     camp.append(player.node.name); player.node.name.classList.add('avatar-name');
     hp.append(player.node.hp);player.append(camp, hp);
-    playerMounts.set(player, {camp, hp, campName, originals});
+    playerMounts.set(player, {camp, hp, campName, originals,countText:player.node.count.dataset.text});
    }
    const mount = playerMounts.get(player);
    if (mount) {
+    // Keep count text and identity handlers native. Project only publicly
+    // displayed identity text: never reveal hidden player.identity data.
+    const count=player.node.count;count.classList.add('quark-card-count');
+    if(count.dataset.text!==count.textContent)count.dataset.text=count.textContent;
+    const identity=player.node.identity;
+    const text=identity.firstElementChild?.textContent?.trim();
+    const key=lib.config.mode==='doudizhu'?({主:'dizhu',反:'nongmin',地:'dizhu',农:'nongmin'})[text]:lib.config.mode==='identity'?({主:'zhu',忠:'zhong',反:'fan',内:'nei',猜:'cai'})[text]:null;
+    if(key){
+     if(!mount.identityImage){const img=document.createElement('img');img.className='quark-identity-art';img.alt='';img.setAttribute('aria-hidden','true');identity.append(img);mount.identityImage=img;img.addEventListener('error',()=>identity.classList.remove('quark-identity-image'));}
+     const src=`${lib.assetURL}theme/quark_migration/assets/identity/${key}.png`;
+     if(mount.identityImage.getAttribute('src')!==src)mount.identityImage.setAttribute('src',src);
+     identity.classList.add('quark-identity-image');
+    }else {mount.identityImage?.remove();mount.identityImage=null;identity.classList.remove('quark-identity-image');}
     const group = ['wei','shu','wu','qun','shen','jin','key'].includes(player.group) ? player.group : '';
     if (mount.camp.dataset.camp !== group) {
      mount.camp.dataset.camp = group;

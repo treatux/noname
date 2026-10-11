@@ -274,3 +274,21 @@ html {background-image: url('./assets/background.jpg') !important; background-si
 /* Plain native equipment range text is replaced by the supplied distance PNG.
    Tagged ranges/addinfo stay visible; native text remains intact for fallback. */
 .card.quark-distance-replaced > .range {visibility:hidden;}
+/* Supplied player2.css:1393-1509. Preserve native count/identity nodes and
+   handlers; no identity data is inferred beyond the text already displayed. */
+#arena.quark-player-presentation > .player > .quark-card-count {
+ position:absolute;top:auto;right:auto;left:-8px;bottom:-7px;line-height:28px;
+ height:28px;width:36px;padding:0;background:url('./assets/player-card-count.png') 0 -1px/100% 100% no-repeat;
+ border:none;box-shadow:none;font:28px/28px quark-HYZLSJ;color:white;text-align:center;
+ text-shadow:0 0 3px #F5D78E,0 0 3px black,0 0 3px black,0 0 3px black;
+ border-radius:0;z-index:99;transition-property:transform,opacity;
+}
+#arena.quark-player-presentation > .player[data-position='0'] > .quark-card-count {visibility:hidden;}
+.quark-card-count > br {display:none;}
+.quark-card-count::before {content:attr(data-text);position:absolute;left:0;top:0;width:100%;height:100%;line-height:28px;color:transparent;-webkit-text-stroke:2px black;z-index:-1;}
+#arena.quark-player-presentation > .player > .identity.quark-identity-image {
+ left:auto;top:-8px;right:-8px;width:35px;height:35px;line-height:31px;font-size:31px;
+ background:none;z-index:89;transform:none;transition:none;
+}
+.identity.quark-identity-image > div:first-child {visibility:hidden;}
+.identity > .quark-identity-art {position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;}

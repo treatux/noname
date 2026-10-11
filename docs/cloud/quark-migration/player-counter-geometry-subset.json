@@ -1,0 +1,166 @@
+{
+  "scope": "Player count and identity geometry subset only, random characters/events differ; NOT full same-stage visual acceptance",
+  "comparisons": [
+    {
+      "position": "0",
+      "layer": "countRect",
+      "delta": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0
+      }
+    },
+    {
+      "position": "0",
+      "layer": "identityRect",
+      "delta": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0
+      }
+    },
+    {
+      "position": "1",
+      "layer": "countRect",
+      "delta": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0
+      }
+    },
+    {
+      "position": "1",
+      "layer": "identityRect",
+      "delta": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0
+      }
+    },
+    {
+      "position": "2",
+      "layer": "countRect",
+      "delta": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0
+      }
+    },
+    {
+      "position": "2",
+      "layer": "identityRect",
+      "delta": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0
+      }
+    },
+    {
+      "position": "3",
+      "layer": "countRect",
+      "delta": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0
+      }
+    },
+    {
+      "position": "3",
+      "layer": "identityRect",
+      "delta": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0
+      }
+    },
+    {
+      "position": "4",
+      "layer": "countRect",
+      "delta": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0
+      }
+    },
+    {
+      "position": "4",
+      "layer": "identityRect",
+      "delta": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0
+      }
+    },
+    {
+      "position": "5",
+      "layer": "countRect",
+      "delta": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0
+      }
+    },
+    {
+      "position": "5",
+      "layer": "identityRect",
+      "delta": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0
+      }
+    },
+    {
+      "position": "6",
+      "layer": "countRect",
+      "delta": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0
+      }
+    },
+    {
+      "position": "6",
+      "layer": "identityRect",
+      "delta": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0
+      }
+    },
+    {
+      "position": "7",
+      "layer": "countRect",
+      "delta": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0
+      }
+    },
+    {
+      "position": "7",
+      "layer": "identityRect",
+      "delta": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0
+      }
+    }
+  ],
+  "passed": true
+}

@@ -122,6 +122,60 @@
       "sha256": "fc59470f0fc259ce8227d5cb14158aef49ae3312c9b3b0ccdcbe881be680de58"
     },
     {
+      "source": "extension/十周年UI/image/decoration/shousha_shoupai.png",
+      "target": "theme/quark_migration/assets/player-card-count.png",
+      "bytes": 3508,
+      "sha256": "869a8613b770cc1194ed685a3a5b50a6f70f048d19387dfd80639bdec238d6d8"
+    },
+    {
+      "source": "extension/十周年UI/image/decorations/identity2_zhu.png",
+      "target": "theme/quark_migration/assets/identity/zhu.png",
+      "bytes": 4955,
+      "sha256": "c576030696e1d722aa1cfbfd6475c49f7dac698c12d1d1448dff00946d945f5e"
+    },
+    {
+      "source": "extension/十周年UI/image/decorations/identity2_zhong.png",
+      "target": "theme/quark_migration/assets/identity/zhong.png",
+      "bytes": 5061,
+      "sha256": "4b53710b9bd31ddd9c522f85d04f2035f43055f8c3b727d92ead0b5d209d6875"
+    },
+    {
+      "source": "extension/十周年UI/image/decorations/identity2_fan.png",
+      "target": "theme/quark_migration/assets/identity/fan.png",
+      "bytes": 4781,
+      "sha256": "0e4c3e0274c8b463259acd54fc201a882c3b0b57d8c5ac758a6a2a09949d7e62"
+    },
+    {
+      "source": "extension/十周年UI/image/decorations/identity2_nei.png",
+      "target": "theme/quark_migration/assets/identity/nei.png",
+      "bytes": 5458,
+      "sha256": "15260dca5d6c8bcdffa6b0cf865f47a90deaa7672dc1a0c40192ea99de471ac9"
+    },
+    {
+      "source": "extension/十周年UI/image/decorations/identity2_guessing.png",
+      "target": "theme/quark_migration/assets/identity/guessing.png",
+      "bytes": 606,
+      "sha256": "1edb5f519430d9cb53de8b5325f521b041e780e29f2f1c25f41f57a329229140"
+    },
+    {
+      "source": "extension/十周年UI/image/decorations/identity2_cai.png",
+      "target": "theme/quark_migration/assets/identity/cai.png",
+      "bytes": 2844,
+      "sha256": "abb3491244e81da5211835523e6acf08ee41a5cc9ec678d42a0a02e51dc9e091"
+    },
+    {
+      "source": "extension/十周年UI/image/decorations/identity2_dizhu.png",
+      "target": "theme/quark_migration/assets/identity/dizhu.png",
+      "bytes": 2914,
+      "sha256": "5498a8cefda640fbaca28791e8fd4e84ddb1a1cb8594bb48622263270a9c2a49"
+    },
+    {
+      "source": "extension/十周年UI/image/decorations/identity2_nongmin.png",
+      "target": "theme/quark_migration/assets/identity/nongmin.png",
+      "bytes": 5104,
+      "sha256": "06e49d0c04c019646fa0f14ba26727038a486a1dae67ec05fcd3fb1f87ea6ee2"
+    },
+    {
       "source": "extension/十周年UI/image/decorations/name2_wei.png",
       "target": "theme/quark_migration/assets/name2_wei.png",
       "bytes": 5364,
