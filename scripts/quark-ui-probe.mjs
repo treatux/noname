@@ -161,7 +161,8 @@ try {
   if(i%10===9){const cancel=page.locator('.control > div').filter({hasText:/^取消$/}).first();if(await cancel.isVisible()){await cancel.click({timeout:2000}).catch(()=>{});report.inputs.push('cancel');}}
   await page.waitForTimeout(500);
  }
- report.cardDisplayChecks=await page.evaluate(()=>{
+ report.cardDisplayChecks=await page.evaluate(async()=>{
+  const {syncQuarkCard}=await import('/noname/ui/quark-card-presentation.js');
   const cards=[...document.querySelectorAll('.card.quark-epic-card')];
   const duplicates=cards.filter(c=>['.quark-suit-num','.quark-card-type','.quark-card-art','.quark-card-distance'].some(s=>c.querySelectorAll(':scope > '+s).length>1)).length;
   // CSS-only audit clone outside the engine arena; no Card.init/events/cards
@@ -170,9 +171,22 @@ try {
   let hidden=null;
   if(original){const copy=original.cloneNode(true);copy.classList.add('infohidden');copy.style.position='fixed';copy.style.left='-500px';document.body.append(copy);
    hidden=[...copy.querySelectorAll('.quark-top-name,.quark-suit-num,.quark-card-art,.quark-card-type,.quark-card-distance')].map(n=>({class:n.className,visibility:getComputedStyle(n).visibility}));copy.remove();}
-  return {scope:'Display clone CSS only; not engine input',duplicates,hidden};
+  // Isolated presentation clones with explicit equipment metadata, never
+  // inserted into a player or game event. Check native tags remain visible.
+  const equipment=document.createElement('div');equipment.className='card fullskin';
+  Object.assign(equipment,{name:'qinglong',suit:'spade',number:5});
+  const range=document.createElement('div');range.className='range';range.textContent='范围: 3';equipment.append(range);
+  const title=document.createElement('div');title.className='quark-top-name';equipment.append(title);
+  equipment.style.position='fixed';equipment.style.left='-500px';equipment.style.visibility='visible';range.style.transition='none';document.body.append(equipment);const baselineVisibility=getComputedStyle(range).visibility;syncQuarkCard(equipment,title);
+  const matchingRules=[];const inspectRules=rules=>{for(const rule of rules){if(rule.selectorText){try{if(range.matches(rule.selectorText)&&rule.style?.visibility)matchingRules.push(rule.cssText);}catch{}}if(rule.cssRules)inspectRules(rule.cssRules);if(rule.styleSheet){try{inspectRules(rule.styleSheet.cssRules);}catch{}}}};for(const sheet of document.styleSheets){try{inspectRules(sheet.cssRules);}catch{}}
+  const plain={text:range.textContent,replaced:equipment.classList.contains('quark-distance-replaced'),visibility:getComputedStyle(range).visibility,matchingRules};
+  const tag=document.createElement('span');tag.className='cardtag';tag.textContent='audit-tag';range.append(tag);syncQuarkCard(equipment,title);
+  const tagged={tag:tag.textContent,replaced:equipment.classList.contains('quark-distance-replaced'),visibility:getComputedStyle(range).visibility};equipment.remove();
+  return {scope:'Display clone CSS only; not engine input',duplicates,hidden,distance:{baselineVisibility,plain,tagged}};
  });
  assert.equal(report.cardDisplayChecks.duplicates,0);
+ assert.equal(report.cardDisplayChecks.distance.plain.replaced,true);assert.equal(report.cardDisplayChecks.distance.plain.visibility,'hidden');assert.equal(report.cardDisplayChecks.distance.plain.text,'范围: 3');
+ assert.equal(report.cardDisplayChecks.distance.tagged.replaced,false);assert.equal(report.cardDisplayChecks.distance.tagged.visibility,report.cardDisplayChecks.distance.baselineVisibility);assert.equal(report.cardDisplayChecks.distance.tagged.tag,'audit-tag');
  if(report.cardDisplayChecks.hidden)assert(report.cardDisplayChecks.hidden.every(n=>n.visibility==='hidden'));
  await page.screenshot({path:out+'/input-state.png'});
  assert.equal(report.runtime.theme,'quark_migration');assert.equal(report.runtime.version,'1.11.7');assert.equal(report.runtime.players,probePlayers);assert(report.runtime.handcards>0);assert(report.runtime.background.includes('/assets/background.jpg'));assert(report.runtime.font);assert.deepEqual(report.failedResources,[]);assert.deepEqual(report.errors,[]);
@@ -187,8 +201,8 @@ try {
  });
  assert(report.confirmPresentation.nodes.some(n=>n.link==='ok'&&n.ok&&n.image.includes('/btn.png')));
  assert(report.confirmPresentation.nodes.some(n=>n.link==='cancel'&&n.cancel&&n.image.includes('/confirm-bg-c.png')));
- report.fallback=await page.evaluate(async()=>{const{lib,ui}=await import('/noname.js');await lib.configMenu.appearence.config.theme.onclick('simple');await new Promise(r=>requestAnimationFrame(r));return{theme:lib.config.theme,updateHook:ui.updatehl.name,href:ui.css.theme.href,ornaments:document.querySelectorAll('.quark-rarity-long').length,campWrappers:document.querySelectorAll('#arena > .player > .camp-wrap').length,cardTitles:document.querySelectorAll('.quark-top-name').length,cardDecorations:document.querySelectorAll('.quark-suit-num,.quark-card-art,.quark-card-type,.quark-card-distance').length,epicCards:document.querySelectorAll('.quark-epic-card').length,skillPanels:document.querySelectorAll('.quark-skill-panel').length,hiddenSkillSources:document.querySelectorAll('.quark-native-skill-source').length,originalParentsRestored:[...document.querySelectorAll('#arena > .player')].every(p=>p.node.hp.parentNode===p&&p.node.name.parentNode===p)};});
- assert.equal(report.fallback.theme,'simple');assert.equal(report.fallback.updateHook,'updatehl');assert.equal(report.fallback.ornaments,0);assert.equal(report.fallback.campWrappers,0);assert.equal(report.fallback.cardTitles,0);assert.equal(report.fallback.cardDecorations,0);assert.equal(report.fallback.epicCards,0);assert.equal(report.fallback.skillPanels,0);assert.equal(report.fallback.hiddenSkillSources,0);assert(report.fallback.originalParentsRestored);
+ report.fallback=await page.evaluate(async()=>{const{lib,ui}=await import('/noname.js');await lib.configMenu.appearence.config.theme.onclick('simple');await new Promise(r=>requestAnimationFrame(r));return{theme:lib.config.theme,updateHook:ui.updatehl.name,href:ui.css.theme.href,ornaments:document.querySelectorAll('.quark-rarity-long').length,campWrappers:document.querySelectorAll('#arena > .player > .camp-wrap').length,cardTitles:document.querySelectorAll('.quark-top-name').length,cardDecorations:document.querySelectorAll('.quark-suit-num,.quark-card-art,.quark-card-type,.quark-card-distance').length,epicCards:document.querySelectorAll('.quark-epic-card').length,distanceClasses:document.querySelectorAll('.quark-distance-replaced').length,skillPanels:document.querySelectorAll('.quark-skill-panel').length,hiddenSkillSources:document.querySelectorAll('.quark-native-skill-source').length,originalParentsRestored:[...document.querySelectorAll('#arena > .player')].every(p=>p.node.hp.parentNode===p&&p.node.name.parentNode===p)};});
+ assert.equal(report.fallback.theme,'simple');assert.equal(report.fallback.updateHook,'updatehl');assert.equal(report.fallback.ornaments,0);assert.equal(report.fallback.campWrappers,0);assert.equal(report.fallback.cardTitles,0);assert.equal(report.fallback.cardDecorations,0);assert.equal(report.fallback.epicCards,0);assert.equal(report.fallback.distanceClasses,0);assert.equal(report.fallback.skillPanels,0);assert.equal(report.fallback.hiddenSkillSources,0);assert(report.fallback.originalParentsRestored);
  await page.screenshot({path:out+'/fallback.png'});
  report.resourceBatchPassed=true;
 }catch(e){report.resourceBatchPassed=false;report.failure=String(e);process.exitCode=1;await page.screenshot({path:out+'/failure.png'}).catch(()=>{});}

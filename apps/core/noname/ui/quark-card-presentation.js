@@ -15,19 +15,23 @@ function image(file, className='') {
 export function restoreQuarkCards() {
  for (const [card,mount] of mounts) {
   mount.suit.remove();mount.type.remove();mount.art?.remove();mount.distance.remove();
-  card.classList.remove('quark-epic-card','quark-epic-art');
+  card.classList.remove('quark-epic-card','quark-epic-art','quark-distance-replaced');
  }
  mounts.clear();
  // Include transient engine clones which may never enter the mount map.
  for (const n of document.querySelectorAll('.quark-suit-num,.quark-card-type,.quark-card-art,.quark-card-distance')) n.remove();
- for (const card of document.querySelectorAll('.quark-epic-card,.quark-epic-art')) card.classList.remove('quark-epic-card','quark-epic-art');
+ for (const card of document.querySelectorAll('.quark-epic-card,.quark-epic-art,.quark-distance-replaced')) card.classList.remove('quark-epic-card','quark-epic-art','quark-distance-replaced');
+}
+function syncNativeDistance(card,distance){
+ const ranges=card.querySelectorAll(':scope > .range');
+ card.classList.toggle('quark-distance-replaced',distance.children.length>0 && ranges.length===1 && ranges[0].children.length===0 && !lib.card[card.name]?.addinfo);
 }
 export function syncQuarkCard(card, title) {
  if (!card.name || !title || card.classList.contains('fullborder') || card.classList.contains('fullimage')) return;
  const type=get.type(card), subtype=get.subtype(card);
  const signature=JSON.stringify([card.name,card.nature,card.suit,card.number,type,subtype]);
  let mount=mounts.get(card);
- if (mount?.signature === signature && mount.suit.parentNode===card) return;
+ if (mount?.signature === signature && mount.suit.parentNode===card) {syncNativeDistance(card,mount.distance);return;}
  if (mount) {mount.suit.remove();mount.type.remove();mount.art?.remove();mount.distance.remove();}
  // Engine visual copies clone DOM but are not the original Card identity.
  // Remove inherited decorations before mounting, avoiding duplicated suit/art.
@@ -58,6 +62,9 @@ export function syncQuarkCard(card, title) {
  }
  card.append(suit,badge,distance);
  card.classList.add('quark-epic-card');card.classList.toggle('quark-epic-art',!!art);
+ // Replace only plain native distance text. Tagged/additional ranges remain
+ // native so card tags and supplementary rule descriptions are never hidden.
+ syncNativeDistance(card,distance);
  mounts.set(card,{signature,suit,type:badge,art,distance});
  for (const [old,m] of mounts) if (!old.isConnected) {m.suit.remove();m.type.remove();m.art?.remove();m.distance.remove();mounts.delete(old);}
 }

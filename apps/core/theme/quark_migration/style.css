@@ -271,3 +271,6 @@ html {background-image: url('./assets/background.jpg') !important; background-si
 #arena.quark-player-presentation[data-number='8'] > .player[data-position='5'] {left:calc(36.2% - 64px);top:7px;right:auto;}
 #arena.quark-player-presentation[data-number='8'] > .player[data-position='6'] {left:calc(22.2% - 64px);top:44px;right:auto;}
 #arena.quark-player-presentation[data-number='8'] > .player[data-position='7'] {left:32px;top:21.4%;right:auto;}
+/* Plain native equipment range text is replaced by the supplied distance PNG.
+   Tagged ranges/addinfo stay visible; native text remains intact for fallback. */
+.card.quark-distance-replaced > .range {visibility:hidden;}

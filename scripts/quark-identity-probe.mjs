@@ -88,34 +88,55 @@ try {
   });
   await page.waitForTimeout(500);
   const naturalSeconds = Number(process.env.TEST_NATURAL_SECONDS || 0);
-  if (naturalSeconds) {
-   const deadline = Date.now() + naturalSeconds * 1000;
-   while (Date.now() < deadline) {
-    const over = await page.evaluate(async () => {
-     const { ui, game, _status } = await import('/noname.js');
-     if (!_status.auto && !_status.paused2) ui.click.auto('forced');
-     return !!_status.over;
-    });
-    if (over) {
-     await page.screenshot({ path: `${evidence}/quark-${mode}-natural-result.png` });
-     break;
-    }
-    await page.waitForTimeout(1000);
-   }
-  }
   let natural = null;
   if (naturalSeconds) {
-   natural = await page.evaluate(async () => { const { game, _status } = await import('/noname.js'); return { over: !!_status.over, round: game.roundNumber, alive: game.players.length, dead: game.dead.length, useCard: [...game.players, ...game.dead].reduce((n, p) => n + p.getAllHistory('useCard').length, 0) }; });
-   if (natural.over) {
-    await page.screenshot({ path: `${evidence}/quark-${mode}-natural-result.png` });
-    const restart = page.getByText('重新开始', { exact: true }).first();
-    const restartVisible = await restart.isVisible({ timeout: 1000 }).catch(() => false);
-    if (restartVisible) {
-     await restart.click({ timeout: 2000 }).catch(() => {});
-     await page.waitForTimeout(1800);
+   const started = Date.now(), deadline = started + naturalSeconds * 1000;
+   const samplesPath=`${evidence}/quark-${mode}-natural.jsonl`;
+   await fs.writeFile(samplesPath,'');
+   while (Date.now() < deadline) {
+    natural = await page.evaluate(async () => {
+     const { ui, game, _status } = await import('/noname.js');
+     if (!_status.auto && !_status.paused2 && !_status.over) ui.click.auto('forced');
+     const all=[...game.players,...game.dead];
+     return {over:!!_status.over,round:game.roundNumber,alive:game.players.length,dead:game.dead.length,useCard:all.reduce((s,p)=>s+p.getAllHistory('useCard').length,0),useSkill:all.reduce((s,p)=>s+p.getAllHistory('useSkill').length,0),event:_status.event?.name,auto:!!_status.auto,players:all.map(p=>({name:p.name,hp:p.hp,dead:p.isDead()}))};
+    });
+    await fs.appendFile(samplesPath,JSON.stringify({elapsedMs:Date.now()-started,...natural})+'\n');
+    await fs.writeFile(`${evidence}/quark-${mode}-natural.json`,JSON.stringify({scope:'Continuous AI natural-play observations; NOT manual input',...natural,errors},null,2));
+    if (natural.over) {await page.screenshot({path:`${evidence}/quark-${mode}-natural-result.png`});break;}
+    await page.waitForTimeout(1000);
+   }
+   if (natural?.over) {
+    // Persist settlement before navigation, then verify a fresh engine bootstrap
+    // rather than assuming a fixed 1.8 seconds means restart succeeded.
+    const restart=page.getByText('重新开始',{exact:true}).first();
+    natural.restart={scope:'Native restart button click and fresh navigation/engine observation',attempted:false,clicked:false,bootstrapped:false,navigations:[]};
+    const onNavigation=frame=>{if(frame===page.mainFrame())natural.restart.navigations.push({url:frame.url(),elapsedMs:Date.now()-started});};
+    page.on('framenavigated',onNavigation);
+    if(await restart.isVisible({timeout:1000}).catch(()=>false)){
+     natural.restart.attempted=true;
+     await page.evaluate(()=>{window.quarkRestartDocumentMarker='old-settled-document';});
+     natural.restart.hit=await restart.evaluate(n=>{const r=n.getBoundingClientRect();const x=r.x+r.width/2,y=r.y+r.height/2;return{x,y,rect:JSON.parse(JSON.stringify(r)),hit:document.elementFromPoint(x,y)?.textContent?.slice(0,50)};});
+     try{await restart.click({timeout:8000});natural.restart.clicked=true;}catch(e){natural.restart.clickFailure=String(e);}
+     if(!natural.restart.clicked){
+      // Real pointer coordinates, not a forced DOM click or synthetic reload.
+      try{await page.mouse.click(natural.restart.hit.x,natural.restart.hit.y);natural.restart.coordinateClickAttempted=true;}catch(e){natural.restart.pointerFailure=String(e);}
+     }
+     const bootstrapDeadline=Date.now()+90000;
+     natural.restart.samples=[];
+     while(Date.now()<bootstrapDeadline){
+      try{
+       const state=await page.evaluate(async()=>{const{game,lib,_status}=await import('/noname.js');return{marker:window.quarkRestartDocumentMarker||null,version:lib.version,theme:lib.config.theme,players:game.players.length,over:!!_status.over,arena:!!document.querySelector('#arena'),event:_status.event?.name};});
+       natural.restart.samples.push(state);natural.restart.state=state;
+       if(!state.marker && state.arena && state.players>0 && !state.over && natural.restart.navigations.length>0){natural.restart.bootstrapped=true;break;}
+      }catch{}
+      await fs.writeFile(`${evidence}/quark-${mode}-natural.json`,JSON.stringify({...natural,errors},null,2));
+      await page.waitForTimeout(1000);
+     }
+     if(natural.restart.bootstrapped)await page.screenshot({path:`${evidence}/quark-${mode}-restarted.png`});
+     else natural.restart.failure='No fresh navigation and non-settled native arena observed';
     }
-    const restarted = await page.evaluate(async () => { const { game, _status } = await import('/noname.js'); return { players: game.players.length, over: !!_status.over, arena: !!document.querySelector('#arena') }; });
-    natural.restart = { attempted: restartVisible, ...restarted };
+    page.off('framenavigated',onNavigation);
+    await fs.writeFile(`${evidence}/quark-${mode}-natural.json`,JSON.stringify({scope:'AI natural-play with separate actual restart-button proof',...natural,errors},null,2));
    }
   }
   await page.screenshot({ path: `${evidence}/quark-${mode}-battle.png` });

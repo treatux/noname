@@ -26,3 +26,9 @@
 ## 验证边界与后续
 
 `scripts/quark-card-compare.mjs` 比较归一化牌内图层几何，仅为子集验证；不同随机牌、武将、事件，未匹配类别单列，不冒充全屏同阶段通过。仍需人物区计数/装备/身份标记、八人布局、技能完整操作、提示/UI 动画和其他扩展切换、结算与正式串流输入。实体手机外网音视频、触摸、温升和电池没有本阶段证据。
+
+## 原生装备范围重复修正
+
+截图显示原生“范围:1”与移植距离PNG重复。新增 `syncNativeDistance` 仅在已有图形距离、且恰有一个无子元素的原生range、没有addinfo时附加隐藏类；原生text/节点不被改写。有cardtag或额外描述则保留原生展示，后续状态变化每次sync检查。simple回退移除隐藏类。
+
+`card-distance-build.log` 完整构建完成后同步模块和CSS。`card-distance-no-transition/runtime.json`：独立DOM展示审计，范围3原生文本仍保存、可被图形替代而隐藏；添加cardtag后取消替代类且恢复基线visible；隐藏牌检查、重复节点检查、回退distanceClasses=0、errors=[]。这是脱离游戏的CSS/DOM审计，SKIP_INPUT=1，不当作真实出牌/规则事件证据。前几轮即时visibility断言失败，原因是原生CSS visibility transition尚未结束；审计克隆设置transition:none后取得上述结果，不改实际游戏过渡来凑通过。
