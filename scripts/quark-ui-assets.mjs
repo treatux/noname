@@ -7,11 +7,13 @@ const reference = '/root/noname-cloud/reference/quark-handheld/runtime';
 const pairs = [
  ['image/background/cdv_cdv_ol_bg.jpg','background.jpg'],
  ['font/shousha.ttf','shousha.ttf'],
+ ...['cardstyle_face.png','cardstyle_back.png','cardstyle_bg.png'].map(x=>[`extension/EpicFX/asset/skel/cardFace/1000/${x}`,`epic-${x}`]),
  ['theme/style/card/image/ol.png','card-ol.png'],
  ['theme/style/cardback/image/ol.png','cardback-ol.png'],
  ['theme/style/cardback/image/ol2.png','cardback-ol2.png'],
  ...['btn.png','confirm-bg-c.png','cbtn.png','QX.png','huanpai2.png','qipai.png'].map(x=>[`extension/手杀ui/lbtn/images/uibutton/${x}`,x]),
  ['extension/手杀ui/fonts/HYZLSJ.ttf','HYZLSJ.ttf'],
+ ...['wei','shu','wu','qun','shen','jin','key'].map(x=>[`extension/十周年UI/image/decorations/name2_${x}.png`,`name2_${x}.png`]),
  ...['common','rare','epic','legend','junk'].map(x=>[`extension/十周年UI/assets/image/long_${x}.png`,`long_${x}.png`]),
 ];
 const entries=[];

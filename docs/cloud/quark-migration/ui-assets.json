@@ -14,6 +14,24 @@
       "sha256": "229c27e3e48f0760b585380901b42e408c904260fee3faa6f58ccaf0c415ff51"
     },
     {
+      "source": "extension/EpicFX/asset/skel/cardFace/1000/cardstyle_face.png",
+      "target": "theme/quark_migration/assets/epic-cardstyle_face.png",
+      "bytes": 7384,
+      "sha256": "ae0a36341d39528f126fdd92c828a5f60a923260f47a41b430f33909948e1b26"
+    },
+    {
+      "source": "extension/EpicFX/asset/skel/cardFace/1000/cardstyle_back.png",
+      "target": "theme/quark_migration/assets/epic-cardstyle_back.png",
+      "bytes": 25371,
+      "sha256": "3e66b52715ddee0ee0d4ac8699560cff2b4fb893b60daf4c47816792ebab1be5"
+    },
+    {
+      "source": "extension/EpicFX/asset/skel/cardFace/1000/cardstyle_bg.png",
+      "target": "theme/quark_migration/assets/epic-cardstyle_bg.png",
+      "bytes": 1785,
+      "sha256": "df3d7de50e7bb7fd51ac7729b022be108d2d275f5c66cc80cb7e3f72df1965c4"
+    },
+    {
       "source": "theme/style/card/image/ol.png",
       "target": "theme/quark_migration/assets/card-ol.png",
       "bytes": 20816,
@@ -72,6 +90,48 @@
       "target": "theme/quark_migration/assets/HYZLSJ.ttf",
       "bytes": 7016892,
       "sha256": "1611c4cef46e6fc8bc17915036966fdf88ab48bfe627cb2f151c186653eb2924"
+    },
+    {
+      "source": "extension/十周年UI/image/decorations/name2_wei.png",
+      "target": "theme/quark_migration/assets/name2_wei.png",
+      "bytes": 5364,
+      "sha256": "69061af5f3423a804d32357add4b9e9750a55a3eb6463bb26f8ec277f81bc8df"
+    },
+    {
+      "source": "extension/十周年UI/image/decorations/name2_shu.png",
+      "target": "theme/quark_migration/assets/name2_shu.png",
+      "bytes": 5622,
+      "sha256": "b1a9bb1d439e1256c1b1860986d1475ba38b38e75ae03084b46369ef64656f3d"
+    },
+    {
+      "source": "extension/十周年UI/image/decorations/name2_wu.png",
+      "target": "theme/quark_migration/assets/name2_wu.png",
+      "bytes": 4892,
+      "sha256": "724183dafc2b6cab63ec41fde4f362137853fddf87a98c848ca41d94641097d1"
+    },
+    {
+      "source": "extension/十周年UI/image/decorations/name2_qun.png",
+      "target": "theme/quark_migration/assets/name2_qun.png",
+      "bytes": 5530,
+      "sha256": "7defafd75cba0870b8d4d835066043a3563d7e261fddb09ca4848fcadbe1bddc"
+    },
+    {
+      "source": "extension/十周年UI/image/decorations/name2_shen.png",
+      "target": "theme/quark_migration/assets/name2_shen.png",
+      "bytes": 5721,
+      "sha256": "246c61ede627c9ce5c61afca6b31d737d5c08a91f6d094f86c7ab99ba5a3d9ee"
+    },
+    {
+      "source": "extension/十周年UI/image/decorations/name2_jin.png",
+      "target": "theme/quark_migration/assets/name2_jin.png",
+      "bytes": 10556,
+      "sha256": "f47b1806175531275ae18e55928b5b990e3ea7866f783f0c68dbc088706a6b6a"
+    },
+    {
+      "source": "extension/十周年UI/image/decorations/name2_key.png",
+      "target": "theme/quark_migration/assets/name2_key.png",
+      "bytes": 6090,
+      "sha256": "51cb5ff93c95727da10dc4f4388c2f02adc88c230bd3eb8ae31b3337eebfe93d"
     },
     {
       "source": "extension/十周年UI/assets/image/long_common.png",

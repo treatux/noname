@@ -48,3 +48,81 @@ html {background-image: url('./assets/background.jpg') !important; background-si
 .control.quark-confirm > .quark-cancel {color:transparent;text-shadow:none;}
 .control.quark-confirm > .quark-redraw {background-image:url('./assets/huanpai2.png');}
 .control.quark-confirm > .quark-discard {background-image:url('./assets/qipai.png');}
+/* Source: 十周年UI/player2.css camp/hp blocks and extension.js:7734-7766.
+   Native name/hp nodes are reparented reversibly; no HP or identity rule changes. */
+#arena.quark-player-presentation > .player > .camp-wrap {
+ display:block;position:absolute;left:-19px;top:-9px;width:34px;height:128px;
+ transition:none;z-index:1;pointer-events:none;
+}
+#arena.quark-player-presentation .camp-wrap > .avatar-name {
+ display:flex;position:absolute;align-items:flex-start;justify-content:center;
+ left:20px !important;right:auto;top:32px;width:18px;height:96px;
+ font: bold 17px/16px quark-shousha;letter-spacing:-2px;
+ -webkit-text-stroke:1.2px rgba(43,31,25,.4);text-shadow:2px 0 9px #000;z-index:89;
+}
+#arena.quark-player-presentation .camp-wrap > .avatar-name-default {position:absolute;left:21px;top:32px;font:17px/16px quark-shousha;}
+#arena.quark-player-presentation .player.unseen .avatar-name,
+#arena.quark-player-presentation .player:not(.unseen) .avatar-name-default {visibility:hidden;}
+#arena.quark-player-presentation .camp-wrap > .camp-name {
+ position:absolute;top:7px;left:-8.5px;width:183px;height:175px;
+ display:flex;background-size:contain;background-repeat:no-repeat;background-position:center;transition:none;
+}
+#arena.quark-player-presentation > .player > .hp-wrap {
+ position:absolute;display:block;right:106.6px;bottom:9px;width:12px;height:100%;
+ border:solid transparent;border-width:24px 5px 21px 82px;
+ border-image-slice:32 6 25 113 fill;pointer-events:none;z-index:88;
+}
+#arena.quark-player-presentation .hp-wrap > .hp {
+ display:flex;left:0;right:0;width:12px;bottom:-8px;top:auto;
+ font-size:15px;line-height:15px;flex-direction:column-reverse;
+}
+#arena.quark-player-presentation .hp-wrap > .hp > div {
+ position:static;width:15px;height:15px;line-height:100%;border:none;
+}
+#arena.quark-player-presentation .player.dead > .hp-wrap {display:none;}
+/* EpicFX cardFace/1000 wins over original OL in the observed reference.
+   Preserve native fullimage/fullborder types pending their dedicated adapter. */
+.card:not(:empty):not(.infohidden):not(.fullimage):not(.fullborder) {
+ background-image:url('./assets/epic-cardstyle_face.png');
+}
+.card.infohidden {background-image:url('./assets/epic-cardstyle_back.png');}
+.card > .quark-top-name {
+ position:absolute;left:22px;top:14px;width:82px;height:23px;
+ color:black;font:20px quark-shousha;text-align:center;z-index:0;pointer-events:none;
+ background:url('./assets/epic-cardstyle_bg.png') center/100% 100% no-repeat;
+}
+.card > .quark-top-name.base {
+ top:-3px;width:100px;left:50%;transform:translateX(-50%);
+ background:none;
+}
+.card.infohidden > .quark-top-name {visibility:hidden;}
+/* Original player2.css sizing/rightLayout and decadeLayout.css three-seat rules. */
+#arena.quark-player-presentation > .player:not(.minskin) {width:128px !important;height:171.5px !important;--w:128px;}
+#arena.quark-player-presentation > .player[data-position='0'] {left:auto !important;right:30px !important;top:auto !important;bottom:1% !important;}
+#arena.quark-player-presentation[data-number='3'] > .player[data-position='1'] {left:auto;top:7px;right:calc(35.8% - 64px);}
+#arena.quark-player-presentation[data-number='3'] > .player[data-position='2'] {left:calc(36.2% - 64px);top:7px;right:auto;}
+/* Native avatars use a positive stacking layer. Keep original camp labels above
+   that native layer; original legacy avatars used a different stacking contract. */
+#arena.quark-player-presentation > .player > .camp-wrap {z-index:86;}
+.card:not(.infohidden):not(.fullborder) > .quark-top-name ~ .name {display:none;}
+.card:has(> .quark-top-name):not(.infohidden):not(.fullborder) > .name {display:none;}
+/* Legacy display containers must not inherit native generic player-panel paint. */
+#arena.quark-player-presentation > .player > .camp-wrap,
+#arena.quark-player-presentation > .player > .hp-wrap,
+#arena.quark-player-presentation .camp-wrap > .avatar-name,
+#arena.quark-player-presentation .camp-wrap > .avatar-name-default {
+ background:none;box-shadow:none;border-radius:0;
+}
+#arena.quark-player-presentation > .player > .avatar {
+ left:0;top:0;width:100%;height:100%;background-size:cover;
+}
+/* The supplied name2 bitmap includes the player-frame fill. Keep that fill
+   behind the native avatar, with labels in independent stacking layers. */
+#arena.quark-player-presentation > .player > .camp-wrap {z-index:auto;}
+#arena.quark-player-presentation .camp-wrap > .camp-name {
+ left:19px;top:9px;width:128px;height:171.5px;background-size:100% 100%;z-index:1;
+}
+#arena.quark-player-presentation .camp-wrap > .avatar-name {z-index:89;}
+#arena.quark-player-presentation > .player > .avatar {
+ left:20px !important;top:0 !important;width:calc(100% - 20px) !important;height:100% !important;z-index:2;
+}

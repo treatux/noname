@@ -44,13 +44,13 @@ try {
  await page.waitForTimeout(500);
  report.runtime=await page.evaluate(async()=>{
   const{lib,game,ui}=await import('/noname.js');
-  return{version:lib.version,theme:lib.config.theme,mode:lib.config.mode,players:game.players.length,handcards:document.querySelectorAll('.handcards > .card').length,href:ui.css.theme.href,background:getComputedStyle(document.documentElement).backgroundImage,font:document.fonts.check('16px quark-shousha'),ornaments:[...document.querySelectorAll('.quark-rarity-long')].map(n=>({src:n.getAttribute('src'),loaded:n.complete&&n.naturalWidth>0,pointerEvents:getComputedStyle(n).pointerEvents}))};
+  return{version:lib.version,theme:lib.config.theme,mode:lib.config.mode,players:game.players.length,handcards:document.querySelectorAll('.handcards > .card').length,href:ui.css.theme.href,playerMounts:[...document.querySelectorAll('#arena > .player')].map(p=>({nameInCamp:p.node.name.parentNode.className,hpInWrap:p.node.hp.parentNode.className,originalHpSame:p.node.hp===p.querySelector('.hp'),group:p.group,rect:JSON.parse(JSON.stringify(p.getBoundingClientRect())),nameVisible:getComputedStyle(p.node.name).visibility,paint:[...p.children].map(n=>({class:n.className,rect:JSON.parse(JSON.stringify(n.getBoundingClientRect())),bg:getComputedStyle(n).backgroundColor,image:getComputedStyle(n).backgroundImage,z:getComputedStyle(n).zIndex,display:getComputedStyle(n).display}))})),cardTitles:document.querySelectorAll('.quark-top-name').length,cardFace:document.querySelector('.handcards > .card')?getComputedStyle(document.querySelector('.handcards > .card')).backgroundImage:null,background:getComputedStyle(document.documentElement).backgroundImage,font:document.fonts.check('16px quark-shousha'),ornaments:[...document.querySelectorAll('.quark-rarity-long')].map(n=>({src:n.getAttribute('src'),loaded:n.complete&&n.naturalWidth>0,pointerEvents:getComputedStyle(n).pointerEvents}))};
  });
  await page.screenshot({path:out+'/battle.png'});
  // Native mouse input only: never call player.useCard or enable AI for proof.
  const initial=await page.evaluate(async()=>{const{game}=await import('/noname.js');return game.me.getAllHistory('useCard').length;});
  report.inputs=[];
- for(let i=0;i<80;i++){
+ for(let i=0;i<(process.env.SKIP_INPUT ? 0 : 80);i++){
   const history=await page.evaluate(async()=>{const{game}=await import('/noname.js');return game.me.getAllHistory('useCard').map(e=>({card:e.card?.name,targets:e.targets?.map(p=>p.name)}));});
   if(history.length>initial){report.manualUseCard=true;report.useCardHistory=history;break;}
   const cards=page.locator('.handcards > .card.selectable:not(.selected)');
@@ -76,8 +76,8 @@ try {
  });
  assert(report.confirmPresentation.nodes.some(n=>n.link==='ok'&&n.ok&&n.image.includes('/btn.png')));
  assert(report.confirmPresentation.nodes.some(n=>n.link==='cancel'&&n.cancel&&n.image.includes('/confirm-bg-c.png')));
- report.fallback=await page.evaluate(async()=>{const{lib,ui}=await import('/noname.js');await lib.configMenu.appearence.config.theme.onclick('simple');await new Promise(r=>requestAnimationFrame(r));return{theme:lib.config.theme,href:ui.css.theme.href,ornaments:document.querySelectorAll('.quark-rarity-long').length};});
- assert.equal(report.fallback.theme,'simple');assert.equal(report.fallback.ornaments,0);
+ report.fallback=await page.evaluate(async()=>{const{lib,ui}=await import('/noname.js');await lib.configMenu.appearence.config.theme.onclick('simple');await new Promise(r=>requestAnimationFrame(r));return{theme:lib.config.theme,href:ui.css.theme.href,ornaments:document.querySelectorAll('.quark-rarity-long').length,campWrappers:document.querySelectorAll('#arena > .player > .camp-wrap').length,cardTitles:document.querySelectorAll('.quark-top-name').length,originalParentsRestored:[...document.querySelectorAll('#arena > .player')].every(p=>p.node.hp.parentNode===p&&p.node.name.parentNode===p)};});
+ assert.equal(report.fallback.theme,'simple');assert.equal(report.fallback.ornaments,0);assert.equal(report.fallback.campWrappers,0);assert.equal(report.fallback.cardTitles,0);assert(report.fallback.originalParentsRestored);
  await page.screenshot({path:out+'/fallback.png'});
  report.resourceBatchPassed=true;
 }catch(e){report.resourceBatchPassed=false;report.failure=String(e);process.exitCode=1;await page.screenshot({path:out+'/failure.png'}).catch(()=>{});}

@@ -7,7 +7,7 @@ const extensions=['十周年UI','手杀ui','皮肤切换','EpicFX','如真似幻
 const config={};
 const cosmetics=new Set(['theme','layout','touchscreen','image_background','card_style','cardback_style','hp_style','name_font','identity_font','cardtext_font','global_font','ui_zoom']);
 for(const[k,v]of Object.entries(backup))if(cosmetics.has(k)||extensions.some(n=>k.startsWith(`extension_${n}_`)))config[k]=v;
-Object.assign(config,{extensions,mode:'doudizhu',new_tutorial:true,show_splash:'off',version:'1.12.7.0711_β',connect_read_clipboard:false,background_music:'music_off',volumn_audio:0,volumn_background:0,characters:['standard','shenhua','refresh'],cards:['standard','extra']});
+Object.assign(config,{video:'0',extensions,mode:'doudizhu',new_tutorial:true,show_splash:'off',version:'1.12.7.0711_β',connect_read_clipboard:false,background_music:'music_off',volumn_audio:0,volumn_background:0,characters:['standard','shenhua','refresh'],cards:['standard','extra']});
 for(const n of extensions)config[`extension_${n}_enable`]=true;
 config.extension_十周年UI_dynamicSkin=false;config.extension_皮肤切换_useDynamic=false;config.extension_皮肤切换_previewDynamic=false;config.skin={};config.qhly_skinset={};
 const report={scope:'All seven available UI extensions enabled in isolated context; skin payload excluded',requestedExtensions:extensions,errors:[],failedRequests:[],httpErrors:[],runtimePassed:false};
@@ -88,8 +88,27 @@ try{
  report.runtime=await bounded(page.evaluate(()=>{
   const rt=window.quarkRuntime;return{loadingState:rt?{onload:typeof rt.lib.init.onload,extensions:rt.lib.extensions?.map(e=>({name:e[0],content:typeof e[1]})),loaded:rt.lib.loaded,imported:Object.keys(rt.lib.imported||{}),appPlugins:window.app?.plugins?.map(p=>p.name),scripts:[...document.scripts].map(n=>new URL(n.src||location.href).pathname),resources:performance.getEntriesByType('resource').map(e=>({path:decodeURIComponent(new URL(e.name).pathname),duration:e.duration})).slice(-30)}:null,path:location.pathname,version:rt?.lib.version,event:rt?.status.event?.name,paused:rt?.status.paused,ready:document.readyState,body:document.body.textContent?.trim().slice(0,300),diagnosticErrors:window.quarkProbeErrors,players:rt?.game.players?.length||0,handcards:document.querySelectorAll('.handcards > .card').length,arena:!!document.querySelector('#arena'),savedEnable:JSON.parse(localStorage.getItem('noname_0.9_config')||'{}').extensions,activeEnable:rt?.lib.config.extensions?.filter(n=>rt.lib.config[`extension_${n}_enable`]),visibleButtons:[...document.querySelectorAll('button,.button,.control')].filter(n=>n.offsetWidth).map(n=>n.textContent?.trim().slice(0,50)).slice(0,25)};
  }), 'runtime inspection');
+ report.geometry=await bounded(page.evaluate(()=>{
+  const rect=n=>{const r=n.getBoundingClientRect();const s=getComputedStyle(n);return {class:n.className,position:n.dataset.position,x:r.x,y:r.y,width:r.width,height:r.height,font:s.fontFamily,fontSize:s.fontSize,background:s.backgroundImage,transform:s.transform};};
+  return {arena:document.querySelector('#arena')?rect(document.querySelector('#arena')):null,players:[...document.querySelectorAll('#arena > .player')].map(rect),hand:[...document.querySelectorAll('.handcards > .card')].map(rect),skills:[...document.querySelectorAll('.skill-control,.skill-control > div,.skill-control .skillitem')].map(rect),controls:[...document.querySelectorAll('.control')].map(rect)};
+ }), 'geometry');
  await fs.writeFile(out+'/runtime-before-screenshot.json',JSON.stringify(report,null,2));
  await page.screenshot({path:out+'/offline-or-battle.png',timeout:15000,animations:'disabled'});
  report.runtimePassed=!!report.runtime.arena&&report.runtime.players>0;
+ if(report.runtime.handcards>0){
+  await page.waitForTimeout(32000);
+  await page.screenshot({path:out+'/battle-clean.png',timeout:15000});
+  const menu=page.locator('#system').getByText('选项',{exact:true});
+  if(await menu.isVisible()){await menu.tap({timeout:3000}).catch(()=>{});await page.waitForTimeout(500);await page.screenshot({path:out+'/menu.png',timeout:15000});await page.touchscreen.tap(15,400);}
+  if(Number(process.env.NATURAL_SECONDS||0)>0){
+   await bounded(page.evaluate(()=>{const rt=window.quarkRuntime;if(!rt.status.auto)rt.ui.click.auto();}),'auto');
+   for(let i=0;i<Number(process.env.NATURAL_SECONDS);i++){
+    const state=await bounded(page.evaluate(()=>{const r=window.quarkRuntime;return{over:!!r.status.over,round:r.game.roundNumber,alive:r.game.players.length,dead:r.game.dead.length,useCard:[...r.game.players,...r.game.dead].reduce((s,p)=>s+p.getAllHistory('useCard').length,0)};}),'natural state');
+    if(i%10===0)await fs.appendFile(out+'/natural.jsonl',JSON.stringify(state)+'\n');
+    if(state.over){report.natural=state;await page.screenshot({path:out+'/natural-result.png',timeout:15000});break;}
+    await page.waitForTimeout(1000);
+   }
+  }
+ }
 }catch(e){report.failure=String(e);}
 finally{await fs.writeFile(out+'/runtime.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report));await bounded(context.close(),'context close',5000).catch(()=>{});await bounded(browser.close(),'browser close',5000).catch(()=>{});}
